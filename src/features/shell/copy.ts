@@ -1,4 +1,6 @@
 export const shellCopy = {
+  liveInterrupted:
+    'Reconnecting… What you see may be out of date until the connection is back.',
   nav: {
     label: 'Main menu',
     today: 'Today',

@@ -95,7 +95,11 @@ export const prescriptionApi = baseApi.injectEndpoints({
         ApiTag.Visit,
       ],
     }),
-    /** Apply ops; the answer is the whole updated prescription. */
+    /**
+     * Apply ops; the answer is the whole updated prescription. The editor
+     * shows each edit before it's saved and puts the answer in the cache
+     * itself (`useDraftSaves`), with the edits still on their way over it.
+     */
     patchPrescription: build.mutation<
       PrescriptionView,
       { id: string; ops: Op[] }
@@ -106,13 +110,6 @@ export const prescriptionApi = baseApi.injectEndpoints({
         body: { ops },
       }),
       rawResponseSchema: prescriptionViewSchema,
-      // The answer is the new truth: put it straight into the cache.
-      async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-        dispatch(
-          prescriptionApi.util.upsertQueryData('getPrescription', id, data),
-        );
-      },
     }),
     approvePrescription: build.mutation<PrescriptionView, string>({
       extraOptions: { success: rxCopy.toast.approved },

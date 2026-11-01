@@ -25,9 +25,6 @@ export const MIN_RECORDING_MS = 1000;
 /** One recording stops itself after this long, so no upload gets too big. */
 export const MAX_RECORDING_MS = 5 * 60 * 1000;
 
-/** How often to check on recordings the server is still working on. */
-export const VOICE_POLL_MS = 1500;
-
 export const MS_PER_SECOND = 1000;
 
 /** How long the Settings microphone test records. */

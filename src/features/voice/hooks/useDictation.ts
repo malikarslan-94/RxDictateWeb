@@ -15,9 +15,8 @@ import {
   useGetVoiceSessionQuery,
   useLazyGetVoiceSessionQuery,
   useRetrySegmentMutation,
-  voiceApi,
 } from '../api';
-import { MAX_RECORDING_MS, MS_PER_SECOND, VOICE_POLL_MS } from '../constants';
+import { MAX_RECORDING_MS, MS_PER_SECOND } from '../constants';
 import { voiceCopy } from '../copy';
 import type { Recording, TranscriptView } from '../types';
 import { isProcessing, newestSpanIds, nextSeq, toPartItems } from '../utils';
@@ -49,11 +48,9 @@ export function useDictation({
   const recorder = useRecorder(microphone.deviceId);
   const level = useAudioLevel(recorder.stream);
   const sessionArg = prescriptionId ?? skipToken;
-  const cached = voiceApi.endpoints.getVoiceSession.useQueryState(sessionArg);
-  const isServerWorking = cached.data?.segments.some(isProcessing) ?? false;
-  const session = useGetVoiceSessionQuery(sessionArg, {
-    pollingInterval: isServerWorking ? VOICE_POLL_MS : 0,
-  });
+  // The server says when a part is written up; the session refetches then.
+  const session = useGetVoiceSessionQuery(sessionArg);
+  const isServerWorking = session.data?.segments.some(isProcessing) ?? false;
   const [fetchSession] = useLazyGetVoiceSessionQuery();
   const [addSegment] = useAddSegmentMutation();
   const [retrySegment] = useRetrySegmentMutation();

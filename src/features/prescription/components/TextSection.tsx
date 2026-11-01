@@ -4,6 +4,7 @@ import { cx } from '@/utils/classes';
 
 import { rxCopy } from '../copy';
 import { useLineEditing } from '../hooks/useLineEditing';
+import { isPendingId } from '../localOps';
 import { isDictated } from '../utils';
 
 const copy = rxCopy.editor;
@@ -80,12 +81,15 @@ export function TextSection({
           ) : (
             <li
               key={item.id}
+              // Still saving: it can't be changed until the server has it.
+              inert={isPendingId(item.id)}
               className={cx(
                 'group flex items-center gap-3 rounded-full px-4 py-2',
                 touches(item, newSpanIds)
                   ? 'bg-primary-soft'
                   : 'bg-primary-tint',
                 touches(item, highlightSpanIds) && 'ring-2 ring-primary',
+                isPendingId(item.id) && 'opacity-60',
               )}
             >
               {isEditable ? (

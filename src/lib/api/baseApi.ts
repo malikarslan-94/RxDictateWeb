@@ -22,6 +22,9 @@ export const ApiTag = {
   Template: 'Template',
 } as const;
 
+/** Every tag: invalidating them all refetches whatever is on screen. */
+export const ALL_API_TAGS = Object.values(ApiTag);
+
 /**
  * The single RTK Query API. It defines no endpoints itself: each feature adds
  * its own with `baseApi.injectEndpoints` in its `api.ts`.
@@ -29,7 +32,7 @@ export const ApiTag = {
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery,
-  tagTypes: Object.values(ApiTag),
+  tagTypes: ALL_API_TAGS,
   endpoints: () => ({}),
   // A response that doesn't match the contract is a server bug, not a crash.
   catchSchemaFailure: (error) => ({

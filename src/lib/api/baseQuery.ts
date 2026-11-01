@@ -1,3 +1,4 @@
+import type { ThunkAction, UnknownAction } from '@reduxjs/toolkit';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type {
   BaseQueryApi,
@@ -89,7 +90,16 @@ const rawBaseQuery = fetchBaseQuery({
 const urlOf = (args: string | FetchArgs) =>
   typeof args === 'string' ? args : args.url;
 
-type RefreshOutcome = 'refreshed' | 'expired' | 'unavailable';
+/** How a token refresh went. */
+export const RefreshOutcome = {
+  Refreshed: 'refreshed',
+  /** The server refused it: the session is over. */
+  Expired: 'expired',
+  /** Offline or a server fault: keep the session and try later. */
+  Unavailable: 'unavailable',
+} as const;
+export type RefreshOutcome =
+  (typeof RefreshOutcome)[keyof typeof RefreshOutcome];
 
 /** Shared by every request that fails while one refresh is under way. */
 let refreshing: Promise<RefreshOutcome> | null = null;
@@ -120,12 +130,12 @@ async function refreshOnce(
   extraOptions: object,
 ): Promise<RefreshOutcome> {
   const refreshToken = selectRefreshToken(api.getState() as SessionRootState);
-  if (!refreshToken) return 'expired';
+  if (!refreshToken) return RefreshOutcome.Expired;
 
   const stored = loadTokens();
   if (stored && stored.refresh.token !== refreshToken) {
     api.dispatch(tokensRefreshed(stored));
-    return 'refreshed';
+    return RefreshOutcome.Refreshed;
   }
 
   const result = await rawBaseQuery(
@@ -136,17 +146,59 @@ async function refreshOnce(
   if (result.error) {
     // Offline or a server fault is not a verdict: keep the session.
     return REFRESH_REFUSED.includes(fromFetchError(result.error).code)
-      ? 'expired'
-      : 'unavailable';
+      ? RefreshOutcome.Expired
+      : RefreshOutcome.Unavailable;
   }
 
   const session = sessionSchema.safeParse(
     (result.data as SuccessBody<unknown> | undefined)?.data,
   );
-  if (!session.success) return 'unavailable';
+  if (!session.success) return RefreshOutcome.Unavailable;
   saveTokens(session.data.tokens);
   api.dispatch(tokensRefreshed(session.data.tokens));
-  return 'refreshed';
+  return RefreshOutcome.Refreshed;
+}
+
+/** Joins the refresh under way, or starts one. */
+function refreshShared(
+  api: BaseQueryApi,
+  extraOptions: object,
+): Promise<RefreshOutcome> {
+  refreshing ??= refreshSession(api, extraOptions).finally(() => {
+    refreshing = null;
+  });
+  return refreshing;
+}
+
+/**
+ * Refresh now, without a refused request: the live connection does this
+ * before the access token runs out, so it stays open. A refusal ends the
+ * session, as it does for a request.
+ */
+export function refreshSessionNow(): ThunkAction<
+  Promise<RefreshOutcome>,
+  SessionRootState,
+  unknown,
+  UnknownAction
+> {
+  return async (dispatch, getState) => {
+    const outcome = await refreshShared(
+      {
+        dispatch,
+        getState,
+        signal: new AbortController().signal,
+        abort: () => undefined,
+        extra: undefined,
+        endpoint: REFRESH_PATH,
+        type: 'mutation',
+      },
+      {},
+    );
+    if (outcome === RefreshOutcome.Expired) {
+      dispatch(signOutRequested(SignOutReason.Expired));
+    }
+    return outcome;
+  };
 }
 
 /**
@@ -181,15 +233,11 @@ export const baseQuery: BaseQueryFn<
     // Another request may have refreshed while this one was out.
     const outcome =
       selectRequestScope(state()).accessToken !== sentWith
-        ? 'refreshed'
-        : await (refreshing ??= refreshSession(api, extraOptions).finally(
-            () => {
-              refreshing = null;
-            },
-          ));
-    if (outcome === 'refreshed') {
+        ? RefreshOutcome.Refreshed
+        : await refreshShared(api, extraOptions);
+    if (outcome === RefreshOutcome.Refreshed) {
       result = await rawBaseQuery(args, api, extraOptions);
-    } else if (outcome === 'expired') {
+    } else if (outcome === RefreshOutcome.Expired) {
       api.dispatch(signOutRequested(SignOutReason.Expired));
     }
   }

@@ -10,8 +10,5 @@ export const GreetingPeriod = {
 export type GreetingPeriod =
   (typeof GreetingPeriod)[keyof typeof GreetingPeriod];
 
-/** Today's list checks for the assistant's changes this often. */
-export const TODAY_POLL_MS = 15_000;
-
 /** "Waiting 18 min" moves on every minute. */
 export const WAIT_TICK_MS = 60_000;

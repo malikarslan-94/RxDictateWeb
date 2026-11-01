@@ -7,6 +7,7 @@ import { Routes } from '@/constants/routes';
 import { useLocationSwitcher } from '@/features/clinic';
 import { useNewReportsCount } from '@/features/reports';
 import { useHotkey } from '@/hooks/useHotkey';
+import { selectIsLiveInterrupted } from '@/lib/realtime';
 import {
   selectActiveMembership,
   selectActiveRole,
@@ -35,6 +36,7 @@ export function useShell() {
   const role = useAppSelector(selectActiveRole);
   const user = useAppSelector(selectUser);
   const membership = useAppSelector(selectActiveMembership);
+  const isLiveInterrupted = useAppSelector(selectIsLiveInterrupted);
   const isDoctor = role === Role.doctor;
   const switcher = useLocationSwitcher({ canManage: isDoctor });
   const badges: Partial<Record<NavEntry['key'], number>> = {
@@ -49,6 +51,7 @@ export function useShell() {
   return {
     isDoctor,
     isCompact: isConsulting,
+    isLiveInterrupted,
     clinicName: membership?.practiceName ?? '',
     userName: user?.name ?? '',
     roleLabel: isDoctor ? shellCopy.doctor : shellCopy.assistant,

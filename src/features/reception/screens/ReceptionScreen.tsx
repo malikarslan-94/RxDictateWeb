@@ -1,4 +1,4 @@
-import { PageHeader, StatTile, StateMessage } from '@/components';
+import { LiveStatus, PageHeader, StatTile, StateMessage } from '@/components';
 import { BookAppointmentDialog } from '@/features/appointments';
 import { NotificationsBell, useInbox } from '@/features/notifications';
 import { UploadReportDialog } from '@/features/reports';
@@ -40,10 +40,10 @@ export function ReceptionScreen() {
                 {reception.reorderHint}
               </p>
             </div>
-            <p className="flex items-center gap-2 text-meta font-bold text-primary-strong">
-              <span className="size-2 rounded-full bg-primary" />
-              {reception.live}
-            </p>
+            <LiveStatus
+              label={reception.live.label}
+              interrupted={reception.live.isInterrupted}
+            />
           </div>
           {reception.rows.length > 0 ? (
             <ReceptionQueue rows={reception.rows} />

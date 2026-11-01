@@ -1,8 +1,5 @@
 import { VisitStatus } from '@/constants/visits';
 
-/** Reception's list checks for the doctor's approvals this often. */
-export const RECEPTION_POLL_MS = 15_000;
-
 /** "Waiting 18 min" moves on every minute. */
 export const WAIT_TICK_MS = 60_000;
 

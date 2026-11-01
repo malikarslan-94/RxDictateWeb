@@ -104,9 +104,6 @@ export const PAST_RX_PRINT_OPTIONS: PrintOptions = {
   copies: 1,
 };
 
-/** Today's list on the workspace checks for the assistant's changes this often. */
-export const QUEUE_POLL_MS = 15_000;
-
 /** "Saved 4 s ago" moves on this often. */
 export const SAVED_TICK_MS = 5000;
 

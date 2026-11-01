@@ -2,6 +2,7 @@ import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 import { z } from 'zod';
 
 import { handleMembershipRemoved, signOut } from '@/features/auth/signOut';
+import { ALL_API_TAGS, baseApi } from '@/lib/api';
 import {
   locationChosen,
   membershipLost,
@@ -67,5 +68,23 @@ startListening({
     if (last[session.user.id] === locationId) return;
     writeJson(StorageKey.location, { ...last, [session.user.id]: locationId });
     tellOtherTabs({ kind: 'locationChosen', locationId });
+  },
+});
+
+// Another clinic or location: what's on screen belongs to the old one, and
+// nothing polls to correct it. Signing in and out are left alone.
+startListening({
+  predicate: (_action, current, previous) => {
+    const before = previous.session;
+    const after = current.session;
+    return (
+      before.locationId !== null &&
+      after.locationId !== null &&
+      (before.locationId !== after.locationId ||
+        before.practiceId !== after.practiceId)
+    );
+  },
+  effect: (_action, api) => {
+    api.dispatch(baseApi.util.invalidateTags(ALL_API_TAGS));
   },
 });

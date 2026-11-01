@@ -1,4 +1,4 @@
-import { PageHeader, StatTile, StateMessage } from '@/components';
+import { LiveStatus, PageHeader, StatTile, StateMessage } from '@/components';
 import { HotkeyLabel } from '@/constants/keys';
 import { ActivityCard, NotificationsBell } from '@/features/notifications';
 import { PatientPickerDialog } from '@/features/patients';
@@ -49,10 +49,10 @@ export function TodayScreen() {
           </div>
           <div className="flex items-center justify-between">
             <h2 className="text-section">{todayCopy.list.title}</h2>
-            <p className="flex items-center gap-2 text-meta font-bold text-primary-strong">
-              <span className="size-2 rounded-full bg-primary" />
-              {today.live}
-            </p>
+            <LiveStatus
+              label={today.live.label}
+              interrupted={today.live.isInterrupted}
+            />
           </div>
           {today.rows.length > 0 ? (
             <TodayTable rows={today.rows} />

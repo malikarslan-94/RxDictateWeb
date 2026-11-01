@@ -18,13 +18,16 @@ export default defineConfig({
       '/api': {
         target: DEV_API_ORIGIN,
         changeOrigin: true,
+        // The live updates' WebSocket (/api/v1/realtime) goes through too.
+        ws: true,
         // To the browser the API is on the page's own origin, so CORS doesn't
-        // apply. The browser still sends Origin on a POST, and clinic-api's
-        // allow-list refuses an origin it doesn't know ("Origin not
-        // allowed"). Dropping it here makes the dev server's requests look
-        // like the API's other non-browser callers.
+        // apply. The browser still sends Origin on a POST and on a WebSocket,
+        // and clinic-api's allow-list refuses an origin it doesn't know
+        // ("Origin not allowed"). Dropping it here makes the dev server's
+        // requests look like the API's other non-browser callers.
         configure: (proxy) => {
           proxy.on('proxyReq', (proxyReq) => proxyReq.removeHeader('origin'));
+          proxy.on('proxyReqWs', (proxyReq) => proxyReq.removeHeader('origin'));
         },
       },
     },

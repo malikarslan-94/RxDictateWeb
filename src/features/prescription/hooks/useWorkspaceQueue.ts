@@ -13,7 +13,6 @@ import type { QueueEntry } from '@/features/visits';
 import { useHotkey } from '@/hooks/useHotkey';
 import { useAppSelector } from '@/store/hooks';
 
-import { QUEUE_POLL_MS } from '../constants';
 import { rxCopy } from '../copy';
 
 const copy = rxCopy.workspace;
@@ -27,9 +26,7 @@ export function useWorkspaceQueue(currentPatientId: string) {
   const navigate = useNavigate();
   const membership = useAppSelector(selectActiveMembership);
   const locationId = useAppSelector(selectActiveLocationId);
-  const visits = useListTodayVisitsQuery(undefined, {
-    pollingInterval: QUEUE_POLL_MS,
-  });
+  const visits = useListTodayVisitsQuery();
   // The same order as the assistant's list.
   const entries = toQueue(visits.data ?? []).sort(inQueueOrder);
   const open = (entry: QueueEntry) =>

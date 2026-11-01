@@ -14,8 +14,8 @@ export const MAX_COPIES = 5;
 /** How many of the clinic's approvals the print queue reads. */
 export const QUEUE_LIMIT = 50;
 
-/** The print queue checks for the doctor's approvals this often. */
-export const PRINT_QUEUE_POLL_MS = 15_000;
+/** The queue shows today's approvals: it checks the date this often. */
+export const DAY_CHECK_MS = 60_000;
 
 /** WhatsApp's own link for a chat with a number. */
 export const WHATSAPP_URL = 'https://wa.me/';

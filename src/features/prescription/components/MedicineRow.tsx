@@ -5,6 +5,7 @@ import { cx } from '@/utils/classes';
 import { rxCopy } from '../copy';
 import { useMedicineRow } from '../hooks/useMedicineRow';
 import type { RxEditor } from '../hooks/useRxEditor';
+import { isPendingId } from '../localOps';
 import { isDictated, medicineTitle } from '../utils';
 
 const copy = rxCopy.editor;
@@ -33,10 +34,13 @@ export function MedicineRow({
   return (
     <li
       id={`medicine-${medicine.id}`}
+      // Still saving: it can't be changed until the server has it.
+      inert={isPendingId(medicine.id)}
       className={cx(
         'scroll-mt-24 rounded-card border bg-surface px-4 py-3',
         hasWarning ? 'border-warning' : 'border-border',
         isHighlighted && 'ring-2 ring-primary',
+        isPendingId(medicine.id) && 'opacity-60',
       )}
     >
       <div className="grid grid-medicine items-center gap-4">

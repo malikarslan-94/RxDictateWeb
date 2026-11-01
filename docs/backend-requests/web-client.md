@@ -85,7 +85,13 @@ is still `waiting` and has no prescription. The token isn't reused.
 
 ## 6. Live updates
 
-**Now:** the apps poll — today's list and the print queue every 15 s, a voice
+**Shipped (1 Nov 2026).** `src/shared/realtime.schema.ts`, the socket at
+`/api/v1/realtime`, and the events behind it. On the web, `useLiveUpdates`
+keeps the connection, and every `pollingInterval` is gone. Not done on the
+server, because the state doesn't exist yet: "prescription printed" (§3) and
+"visit removed" (§5). What follows is the request as it was sent.
+
+**Before:** the apps poll — today's list and the print queue every 15 s, a voice
 session every 1.5 s while a part is being written up, notifications every 30 s.
 
 **Asked (revised 1 Nov 2026: a WebSocket, not Server-Sent Events):**
@@ -204,7 +210,11 @@ handle, plus Move up and Move down for the keyboard, and `inQueueOrder` sorts by
 
 ## 12. An assistant sees only the patients of their own locations
 
-**Now:** patient routes check the clinic, not the location. An assistant
+**Shipped.** Patients carry location links, and the patient routes and the
+live `patients` and `reports` messages use one rule (`canSeePatient`). What
+follows is the request as it was sent.
+
+**Before:** patient routes check the clinic, not the location. An assistant
 working at one location can search, list and open every patient of the
 clinic, including people only ever seen at a location they aren't part of.
 

@@ -18,12 +18,7 @@ import {
   useListAppointmentsQuery,
   useListFollowUpsQuery,
 } from '../api';
-import {
-  AppointmentKind,
-  DAYS_PER_WEEK,
-  SCHEDULE_POLL_MS,
-  TODAY_TICK_MS,
-} from '../constants';
+import { AppointmentKind, DAYS_PER_WEEK, TODAY_TICK_MS } from '../constants';
 import { appointmentsCopy } from '../copy';
 import type { BookingPreset } from '../types';
 import { toAppointmentItem, toFollowUpItem, weekTiles } from '../utils';
@@ -32,8 +27,8 @@ const copy = appointmentsCopy.schedule;
 
 /**
  * The assistant's Schedule: a week of appointments a day at a time, and the
- * follow-ups the doctor asked for that still need booking. Both check for
- * changes every 15 s, since the doctor adds follow-ups as they approve.
+ * follow-ups the doctor asked for that still need booking. Both update as
+ * they change, since the doctor adds follow-ups as they approve.
  */
 export function useSchedule() {
   const membership = useAppSelector(selectActiveMembership);
@@ -46,16 +41,11 @@ export function useSchedule() {
   const [cancelError, setCancelError] = useState<string>();
 
   const start = addDays(today, weekOffset * DAYS_PER_WEEK);
-  const week = useListAppointmentsQuery(
-    {
-      from: toDateString(start),
-      to: toDateString(addDays(start, DAYS_PER_WEEK - 1)),
-    },
-    { pollingInterval: SCHEDULE_POLL_MS },
-  );
-  const followUps = useListFollowUpsQuery(undefined, {
-    pollingInterval: SCHEDULE_POLL_MS,
+  const week = useListAppointmentsQuery({
+    from: toDateString(start),
+    to: toDateString(addDays(start, DAYS_PER_WEEK - 1)),
   });
+  const followUps = useListFollowUpsQuery();
   const [cancelAppointment, { isLoading: isCancelling }] =
     useCancelAppointmentMutation();
 

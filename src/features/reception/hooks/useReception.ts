@@ -15,11 +15,12 @@ import {
 import type { QueueEntry } from '@/features/visits';
 import { useNow } from '@/hooks/useNow';
 import { messageFor, toApiError } from '@/lib/api';
+import { selectIsLiveInterrupted } from '@/lib/realtime';
 import { selectActiveLocationId, selectActiveMembership } from '@/lib/session';
 import { useAppSelector } from '@/store/hooks';
 import { formatClockTime, formatLongDate } from '@/utils/date';
 
-import { RECEPTION_POLL_MS, ReceptionStage, WAIT_TICK_MS } from '../constants';
+import { ReceptionStage, WAIT_TICK_MS } from '../constants';
 import { receptionCopy } from '../copy';
 import { useQueueReorder } from './useQueueReorder';
 
@@ -27,7 +28,6 @@ const copy = receptionCopy.queue;
 
 type RowAction = { kind: 'upload' | 'book'; patientId: string };
 
-/** Ready to print first, then waiting by token, the printed last. */
 /**
  * The assistant's Today: the queue at their location, what's ready to
  * print as the doctor approves it, and the add-patient panel beside it.
@@ -37,13 +37,9 @@ export function useReception() {
   const now = useNow(WAIT_TICK_MS);
   const membership = useAppSelector(selectActiveMembership);
   const locationId = useAppSelector(selectActiveLocationId);
-  const visits = useListTodayVisitsQuery(undefined, {
-    pollingInterval: RECEPTION_POLL_MS,
-  });
-  const approved = useListPrescriptionsQuery(
-    { status: RxStatus.approved },
-    { pollingInterval: RECEPTION_POLL_MS },
-  );
+  const visits = useListTodayVisitsQuery();
+  const approved = useListPrescriptionsQuery({ status: RxStatus.approved });
+  const isLiveInterrupted = useAppSelector(selectIsLiveInterrupted);
   const marks = usePrintedMarks();
   // What's open for a patient from their row.
   const [action, setAction] = useState<RowAction | null>(null);
@@ -151,7 +147,10 @@ export function useReception() {
         tone: 'default',
       },
     ] as const,
-    live: copy.live(doctor),
+    live: {
+      label: isLiveInterrupted ? commonCopy.reconnecting : copy.live(doctor),
+      isInterrupted: isLiveInterrupted,
+    },
     reorderHint: copy.reorderHint,
     rows: rows.map((row) => ({ ...row, move: reorder.rowFor(row.id) })),
     isLoading: visits.isLoading,

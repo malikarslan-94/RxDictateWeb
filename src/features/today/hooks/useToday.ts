@@ -24,19 +24,19 @@ import {
 import type { QueueEntry } from '@/features/visits';
 import { useNow } from '@/hooks/useNow';
 import { messageFor, toApiError } from '@/lib/api';
+import { selectIsLiveInterrupted } from '@/lib/realtime';
 import { selectActiveLocationId } from '@/lib/session';
 import { useAppSelector } from '@/store/hooks';
 import { formatClockTime, formatLongDate } from '@/utils/date';
 import { firstName } from '@/utils/text';
 
-import { TODAY_POLL_MS, WAIT_TICK_MS } from '../constants';
+import { WAIT_TICK_MS } from '../constants';
 import { todayCopy } from '../copy';
 import type { TodayRow } from '../types';
 import { greetingPeriod } from '../utils';
 
 const copy = todayCopy.list;
 
-/** The one with the doctor, then the waiting by token, then the seen. */
 /**
  * The doctor's Today: who's waiting, who's in, what the assistant did, and
  * the next patient one click away. Ctrl K searches every patient.
@@ -48,10 +48,9 @@ export function useToday() {
   const locations = useListLocationsQuery();
   const locationId = useAppSelector(selectActiveLocationId);
   const members = useListMembersQuery();
-  const visits = useListTodayVisitsQuery(undefined, {
-    pollingInterval: TODAY_POLL_MS,
-  });
+  const visits = useListTodayVisitsQuery();
   const inbox = useInbox();
+  const isLiveInterrupted = useAppSelector(selectIsLiveInterrupted);
   const [isPicking, setIsPicking] = useState(false);
 
   const location = locations.data?.find((place) => place.id === locationId);
@@ -159,7 +158,12 @@ export function useToday() {
         tone: 'default',
       },
     ] as const,
-    live: copy.live(assistantName),
+    live: {
+      label: isLiveInterrupted
+        ? commonCopy.reconnecting
+        : copy.live(assistantName),
+      isInterrupted: isLiveInterrupted,
+    },
     rows,
     isLoading: visits.isLoading,
     error: visits.error ? messageFor(toApiError(visits.error)) : undefined,

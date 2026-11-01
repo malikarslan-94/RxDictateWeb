@@ -2,6 +2,7 @@ import { configureStore, isPlain } from '@reduxjs/toolkit';
 
 import { onboardingSlice } from '@/features/onboarding/slice';
 import { baseApi } from '@/lib/api';
+import { realtimeSlice } from '@/lib/realtime';
 import { sessionSlice } from '@/lib/session';
 import { toastSlice } from '@/lib/toast';
 
@@ -17,6 +18,7 @@ export const store = configureStore({
     [sessionSlice.reducerPath]: sessionSlice.reducer,
     [onboardingSlice.reducerPath]: onboardingSlice.reducer,
     [toastSlice.reducerPath]: toastSlice.reducer,
+    [realtimeSlice.reducerPath]: realtimeSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -30,5 +32,6 @@ export const store = configureStore({
       .concat(baseApi.middleware),
 });
 
+export type AppStore = typeof store;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

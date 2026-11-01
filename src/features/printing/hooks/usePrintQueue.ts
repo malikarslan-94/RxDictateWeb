@@ -7,7 +7,7 @@ import { toQueue, useListTodayVisitsQuery } from '@/features/visits';
 import { useNow } from '@/hooks/useNow';
 import { formatTimeAgo, toDateString } from '@/utils/date';
 
-import { PRINT_QUEUE_POLL_MS, QUEUE_LIMIT } from '../constants';
+import { DAY_CHECK_MS, QUEUE_LIMIT } from '../constants';
 import { printingCopy } from '../copy';
 import { usePrintedMarks } from './usePrintedMarks';
 import { usePrintout } from './usePrintout';
@@ -21,16 +21,14 @@ const copy = printingCopy.queue;
  */
 export function usePrintQueue() {
   const [search] = useSearchParams();
-  const approved = useListPrescriptionsQuery(
-    { status: RxStatus.approved, limit: QUEUE_LIMIT },
-    { pollingInterval: PRINT_QUEUE_POLL_MS },
-  );
-  const visits = useListTodayVisitsQuery(undefined, {
-    pollingInterval: PRINT_QUEUE_POLL_MS,
+  const approved = useListPrescriptionsQuery({
+    status: RxStatus.approved,
+    limit: QUEUE_LIMIT,
   });
+  const visits = useListTodayVisitsQuery();
   const marks = usePrintedMarks();
   const settings = usePrintSettings();
-  const now = useNow(PRINT_QUEUE_POLL_MS);
+  const now = useNow(DAY_CHECK_MS);
   const tokens = new Map(
     toQueue(visits.data ?? []).map((entry) => [entry.id, entry]),
   );

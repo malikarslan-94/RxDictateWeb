@@ -17,6 +17,8 @@ export const commonCopy = {
   next: 'Next',
   previous: 'Previous',
   notifications: 'Notifications',
+  /** In place of "Live" while the live connection is down. */
+  reconnecting: 'Reconnecting…',
   codeDigit: (label: string, position: number) => `${label}, digit ${position}`,
   sexShort: { male: 'M', female: 'F', other: 'O' } satisfies Record<
     Sex,

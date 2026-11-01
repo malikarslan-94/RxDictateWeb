@@ -12,8 +12,8 @@ export const INBOX_PAGE_SIZE = 20;
 /** How many the Activity card on Today shows. */
 export const ACTIVITY_LIMIT = 4;
 
-/** How often the bell and Activity check for news. */
-export const INBOX_POLL_MS = 30_000;
+/** "5 min ago" in the bell and Activity moves on this often. */
+export const INBOX_TICK_MS = 30_000;
 
 const QUIET = 'bg-neutral-soft text-ink-secondary';
 

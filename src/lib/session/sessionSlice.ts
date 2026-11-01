@@ -172,6 +172,8 @@ export const sessionSlice = createSlice({
       locationId: state.locationId,
     }),
     selectRefreshToken: (state) => state.tokens?.refresh.token ?? null,
+    /** The access token and when it runs out. */
+    selectAccessToken: (state) => state.tokens?.access ?? null,
     selectSignOutReason: (state) => state.signOutReason,
     selectLostAccessTo: (state) => state.lostAccessTo,
   },
@@ -200,6 +202,7 @@ export const {
   selectAppArea,
   selectRequestScope,
   selectRefreshToken,
+  selectAccessToken,
   selectSignOutReason,
   selectLostAccessTo,
 } = sessionSlice.selectors;

@@ -10,7 +10,6 @@ import { messageFor, toApiError } from '@/lib/api';
 import { formatClockTime, formatShortDate, fromDateString } from '@/utils/date';
 import { maskE164 } from '@/utils/phone';
 
-import { QUEUE_POLL_MS } from '../constants';
 import { rxCopy } from '../copy';
 
 /**
@@ -26,9 +25,7 @@ export function useConsultation() {
   const visitId = search.get('visitId');
 
   const patient = useGetPatientQuery(patientId || skipToken);
-  const visits = useListTodayVisitsQuery(undefined, {
-    pollingInterval: QUEUE_POLL_MS,
-  });
+  const visits = useListTodayVisitsQuery();
   const visit =
     visits.data?.find((item) =>
       visitId ? item.id === visitId : item.patientId === patientId,

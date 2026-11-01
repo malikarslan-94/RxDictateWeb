@@ -26,6 +26,3 @@ export const LINK_REFRESH_MARGIN_MS = 30_000;
 
 /** Patients with new reports, a page at a time. */
 export const NEW_REPORTS_PAGE_SIZE = 20;
-
-/** The menu's count of new reports checks for uploads this often. */
-export const NEW_REPORTS_POLL_MS = 60_000;

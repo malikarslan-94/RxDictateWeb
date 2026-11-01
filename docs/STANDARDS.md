@@ -46,7 +46,7 @@ src/
   ui/             design-system primitives. No business words ("patient", "doctor").
   components/     shared parts built from ui/, used by 2+ features (PageHeader, form fields, printout)
   hooks/          generic hooks (useHotkey, useDebounce, useNow)
-  lib/            infrastructure: api, session, toast, storage, recordings, files
+  lib/            infrastructure: api, session, realtime, toast, storage, recordings, files
   theme/          theme.css: tokens, utilities, print rules
   constants/      app-wide constants and enums (Routes, Hotkeys, ErrorCode, Role)
   utils/          pure functions (phone, time, date, text)
@@ -100,7 +100,8 @@ export function SignInScreen() {
 - **API calls** live in the feature's `api.ts` and go through `lib/api`. Nothing else calls `fetch`. The one exception is file bytes sent to a signed storage URL, which go through `putFile` in `lib/files`.
 - **Server data stays in the RTK Query cache.** Slices hold only app state. Never copy API responses into a slice.
 - Use the typed `useAppSelector` / `useAppDispatch`, never the plain react-redux hooks.
-- **Live lists poll** with `pollingInterval` and a named `_POLL_MS` constant until the server can push changes.
+- **Lists update live; nothing polls.** `useLiveUpdates` (`features/auth`, mounted in `SessionGate`) keeps one WebSocket open through `lib/realtime`. Each `changed` message refetches the tags `lib/realtime/topics.ts` maps its topic to; a reconnect, or a new clinic or location, refetches everything. A new query a topic should refresh needs its tag in that map. Never add `pollingInterval`.
+- **A prescription edit shows before it's saved.** The editor's changes go through `apply` in `usePrescriptionDraft`, which hands them to `useDraftSaves`: the change shows at once (the server's op rules run here, in `localOps.ts`), the PATCHes go one at a time and in order, and each answer replaces the cached draft with the edits still waiting laid over it. A refused edit drops out and says why. A line added but not saved yet has a `pending-` id and can't be changed until it lands. Approve and discard act on the whole draft, so they wait for `whenSaved` first.
 - **Today's list has one order on every screen**, the assistant's and the doctor's: sort with `inQueueOrder` from `features/visits` (status, then the assistant's `queuePosition`), never a local order. Only the assistant moves a waiting patient (`useMoveVisitMutation` with `{ before }`); the list moves at once and the token never changes.
 - **Keyboard shortcuts** are declared in `constants/keys.ts` (`Hotkeys`, and `HotkeyLabel` for showing them) and bound with `useHotkey`. A shortcut without Ctrl never fires while the user types in a field. Each shortcut has one owner (Ctrl K belongs to the shell).
 
@@ -166,6 +167,7 @@ export type AuthMode = (typeof AuthMode)[keyof typeof AuthMode];
 - **Tokens** live only in `lib/session/tokenStore`: `sessionStorage` (gone when the tab closes), or `localStorage` when "Keep me signed in on this computer" is ticked. This is interim until the server sets an httpOnly refresh cookie. Nothing else sensitive goes in browser storage.
 - **Per-computer settings** (print, microphone, lock time, printed marks, last location) stay through sign-out: each computer has its own printer and microphone.
 - **Tabs** follow each other through `lib/session/tabSync` (BroadcastChannel): logging out in one logs out all; a new location in one shows in the others.
+- **The live connection** (`lib/realtime`) signs in with the access token in its first message, never in the address, and sends each fresh token over the open socket. The token is refreshed shortly before it runs out, so the server never closes the line for an old one. A quiet heartbeat means a dead line: drop it and reconnect. Down for more than a few seconds, the shell shows `LiveNotice` and the Live lines (`LiveStatus`) read "Reconnecting…".
 - **Recordings** that haven't uploaded live in memory (`lib/recordings`) and never in storage.
 - **Report pages** chosen for upload stay in memory as `File` objects and never go to storage. Thumbnails are object URLs, revoked when the page is removed or the form closes. Closing the form or signing out aborts an upload in progress.
 - **Printing** renders the page into a print-only portal and calls `window.print()`. Print rules are in `theme.css`; the page is real A4 in millimetres, and the preview is the same page scaled.

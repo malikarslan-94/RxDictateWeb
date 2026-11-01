@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useNavigate } from 'react-router';
 
@@ -9,21 +9,17 @@ import { messageFor, toApiError } from '@/lib/api';
 import {
   useApprovePrescriptionMutation,
   useCancelPrescriptionMutation,
-  useCreatePrescriptionMutation,
   useGetPrescriptionQuery,
   useListPrescriptionsQuery,
   usePatchPrescriptionMutation,
   useRevisePrescriptionMutation,
 } from '../api';
-import {
-  EMPTY_SECTIONS,
-  PrintLanguage,
-  RxSource,
-  RxStatus,
-} from '../constants';
+import { EMPTY_SECTIONS, RxStatus } from '../constants';
 import { rxCopy } from '../copy';
 import { confirmMedicine, copyPrescription } from '../ops';
 import { isEmpty } from '../utils';
+import { useDraftSaves } from './useDraftSaves';
+import { useOpenDraft } from './useOpenDraft';
 
 export type UsePrescriptionDraftOptions = {
   patientId: string;
@@ -36,8 +32,8 @@ export type UsePrescriptionDraftOptions = {
 /**
  * The prescription being written for this patient today: the visit's open
  * draft, else its approved one, else none yet. The draft is created on the
- * first change, never just by looking, and every change is a PATCH of ops
- * whose answer replaces the cached copy.
+ * first change, never just by looking. Every change shows at once and is
+ * saved behind the scenes as a PATCH of ops (`useDraftSaves`).
  */
 export function usePrescriptionDraft({
   patientId,
@@ -67,14 +63,15 @@ export function usePrescriptionDraft({
   const fetched = useGetPrescriptionQuery(id ?? skipToken);
   const prescription = fetched.data ?? (current?.id === id ? current : null);
 
-  const [create] = useCreatePrescriptionMutation();
-  const [patch, { isLoading: isSaving }] = usePatchPrescriptionMutation();
+  const [patch] = usePatchPrescriptionMutation();
   const [approveRx, { isLoading: isApproving }] =
     useApprovePrescriptionMutation();
   const [reviseRx, { isLoading: isRevising }] = useRevisePrescriptionMutation();
   const [cancelRx, { isLoading: isDiscarding }] =
     useCancelPrescriptionMutation();
   const [error, setError] = useState<string>();
+  const fail = (caught: unknown) => setError(messageFor(toApiError(caught)));
+  const saves = useDraftSaves(fail);
 
   // Another patient on the same page starts from scratch.
   useEffect(() => {
@@ -83,30 +80,16 @@ export function usePrescriptionDraft({
     setError(undefined);
   }, [patientId]);
 
-  // One create in flight at a time, so two quick edits can't make two drafts.
-  const creating = useRef<Promise<string> | null>(null);
-  const ensureDraft = (): Promise<string> => {
-    if (id && prescription?.status === RxStatus.draft)
-      return Promise.resolve(id);
-    // The server puts them on today's list if they aren't on it, and the
-    // visit becomes "With doctor": from the queue, a search or Add patient.
-    creating.current ??= create({
-      patientId,
-      visitId: activeVisitId,
-      source: RxSource.typed,
-      printLanguage: PrintLanguage.en_ur,
-    })
-      .unwrap()
-      .then((created) => {
-        setStartedVisitId(created.visitId);
-        setChosenId(created.id);
-        return created.id;
-      })
-      .finally(() => {
-        creating.current = null;
-      });
-    return creating.current;
-  };
+  const openDraft = useOpenDraft({
+    prescription,
+    patientId,
+    visitId: activeVisitId,
+    onCreated: (created) => {
+      setStartedVisitId(created.visitId);
+      setChosenId(created.id);
+    },
+  });
+  const ensureDraft = async () => (await openDraft()).id;
 
   const run = async (task: () => Promise<unknown>): Promise<boolean> => {
     setError(undefined);
@@ -114,17 +97,22 @@ export function usePrescriptionDraft({
       await task();
       return true;
     } catch (caught) {
-      setError(messageFor(toApiError(caught)));
+      fail(caught);
       return false;
     }
   };
 
-  /** Apply ops to the draft, creating it first if needed. */
-  const apply = (ops: Op[]) =>
-    run(async () => {
-      const draftId = await ensureDraft();
-      await patch({ id: draftId, ops }).unwrap();
+  /**
+   * Apply ops to the draft, creating it first if needed. True once the change
+   * shows; a save that fails later takes it back and says so.
+   */
+  const apply = async (ops: Op[]): Promise<boolean> => {
+    let isShown = false;
+    await run(async () => {
+      isShown = saves.save(await openDraft(), ops);
     });
+    return isShown;
+  };
 
   const sections = prescription?.sections ?? EMPTY_SECTIONS;
   const isDraft = !prescription || prescription.status === RxStatus.draft;
@@ -142,7 +130,7 @@ export function usePrescriptionDraft({
     isEmpty: empty,
     isLoading: !isReady,
     error,
-    isSaving,
+    isSaving: saves.isSaving,
     apply,
     /** The open draft's id, for dictating into it; null once approved. */
     draftId: isDraft ? id : null,
@@ -163,6 +151,7 @@ export function usePrescriptionDraft({
     approve: () =>
       run(async () => {
         if (!id) return;
+        await saves.whenSaved(id);
         const flagged = sections.medicines.filter(
           (item) => item.flags.length > 0,
         );
@@ -188,6 +177,7 @@ export function usePrescriptionDraft({
     discard: () =>
       run(async () => {
         if (!id) return;
+        await saves.whenSaved(id);
         await cancelRx(id).unwrap();
         // Back to whatever this visit has now: its approved one, or nothing.
         setChosenId(null);

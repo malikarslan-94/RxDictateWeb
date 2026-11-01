@@ -24,6 +24,7 @@ export {
   selectAppArea,
   selectRequestScope,
   selectRefreshToken,
+  selectAccessToken,
   selectSignOutReason,
   selectLostAccessTo,
 } from './sessionSlice';

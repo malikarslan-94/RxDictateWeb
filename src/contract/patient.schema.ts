@@ -97,8 +97,12 @@ export const updatePatientBodySchema = z
 export type UpdatePatientBody = z.infer<typeof updatePatientBodySchema>;
 
 /**
- * Patient search is practice-wide on purpose: a patient who was first seen at
- * one location must be findable at another without being typed in twice.
+ * The doctor's patient search is practice-wide on purpose: a patient who was
+ * first seen at one location must be findable at another without being typed
+ * in twice. An assistant's covers the patients linked to the locations they
+ * work at - registered, seen or booked there - plus anyone whose whole phone
+ * number they type, so a patient arriving at a second location is added to the
+ * list there rather than registered again.
  *
  * `q` matches a name, an MR number (with or without the `MR-` prefix, in any
  * case) or the start of a phone number. A bare number is tried as both an MR
