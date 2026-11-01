@@ -1,0 +1,83 @@
+/** The doctor's profile and a location's details, as setup and Settings ask for them. */
+export const clinicCopy = {
+  /** Said once the action works; failures speak for themselves. */
+  toast: {
+    nameSaved: 'Name saved',
+    saved: 'Changes saved',
+    locationAdded: 'Location added',
+    locationSaved: 'Location saved',
+    locationArchived: 'Location archived',
+  },
+  profile: {
+    fullName: 'Full name',
+    fullNamePlaceholder: 'Dr. Ayesha Siddiqui',
+    qualifications: 'Qualifications',
+    qualificationsPlaceholder: 'MBBS, FCPS (Medicine)',
+    speciality: 'Speciality',
+    specialityPlaceholder: 'Consultant Physician',
+    pmdcNo: 'PMDC registration no.',
+    pmdcNoPlaceholder: 'e.g. 12345-P',
+    pmdcNoHint: 'Printed on prescriptions.',
+    clinicName: 'Name of your clinic',
+    clinicNameHint:
+      'What your team sees when they sign in. Each location prints its own name.',
+  },
+  location: {
+    name: 'Clinic name',
+    namePlaceholder: 'Own Clinic, F-8',
+    address: 'Address',
+    addressPlaceholder: 'F-8 Markaz, Islamabad',
+    phone: 'Phone for appointments',
+    phoneHint: 'Printed on prescriptions.',
+    days: 'Days',
+    opensAt: 'From',
+    closesAt: 'To',
+  },
+  preview: {
+    title: 'Live preview of your printout',
+    note: 'Updates as you type. Each location prints its own header.',
+    doctorName: 'Your name',
+    clinicName: 'Clinic name',
+  },
+  /** The made-up prescription under a real letterhead, in previews. */
+  sample: {
+    patient: {
+      name: 'Imran Qureshi',
+      ageSex: '45 Y / Male',
+      mrNo: 'MR-10231',
+    },
+    allergy: 'Allergy: Penicillin',
+    diagnosis: ['Essential hypertension', 'Uncontrolled, BP 150/95'],
+    complaints: ['Headache, morning heaviness · 2 weeks'],
+    investigations: ['Lipid profile (fasting)', 'Serum creatinine'],
+    followUp: 'Wed, 4 Nov 2026',
+    medicines: [
+      {
+        id: 'amlodipine',
+        title: 'Tab. Amlodipine 5 mg',
+        en: 'Once daily, in the morning after breakfast',
+        ur: 'ایک گولی صبح ناشتے کے بعد',
+        dose: '1+0+0',
+        duration: '30 days',
+      },
+      {
+        id: 'losartan',
+        title: 'Tab. Losartan 50 mg',
+        en: 'Once daily, at night after dinner',
+        ur: 'ایک گولی رات کھانے کے بعد',
+        dose: '0+0+1',
+        duration: '30 days',
+      },
+    ],
+    avoid: ['Extra salt, pickles, fried snacks'],
+    advice: ['Walk 30 minutes daily.'],
+    rxNumber: 'RX-2026-000418',
+  },
+  errors: {
+    fullNameRequired: 'Enter your full name',
+    clinicNameRequired: 'Enter a name for this clinic',
+    daysRequired: 'Pick at least one day',
+    timeRequired: 'Choose a time',
+    closesBeforeOpens: 'Closing time must be after opening time',
+  },
+} as const;

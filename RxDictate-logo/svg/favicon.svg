@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><rect width="1024" height="1024" rx="229.0688" fill="#07A996"/>
+<svg x="102.4" y="102.4" width="819.2" height="819.2" viewBox="0 0 120 120"><defs><mask id="m37" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+<rect x="37" y="6" width="46" height="108" rx="16" fill="#fff"/><rect x="6" y="37" width="108" height="46" rx="16" fill="#fff"/>
+<polyline points="14,60 40,60 50,38 64,82 74,60 106,60" fill="none" stroke="#000" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></mask></defs>
+<rect width="120" height="120" fill="#FFFFFF" mask="url(#m37)"/></svg></svg>

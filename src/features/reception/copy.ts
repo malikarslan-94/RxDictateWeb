@@ -1,0 +1,66 @@
+export const receptionCopy = {
+  meta: (parts: string[]) => parts.filter(Boolean).join(' · '),
+  title: "Today's list",
+  find: 'Find a patient',
+  stats: {
+    today: 'Patients today',
+    waiting: 'Waiting',
+    ready: 'Ready to print',
+    printed: 'Printed',
+  },
+  queue: {
+    title: 'Queue',
+    live: (doctor: string) =>
+      doctor ? `Live · updates as ${doctor} approves` : 'Live',
+    columns: {
+      token: '#',
+      patient: 'Patient',
+      vitals: 'Vitals',
+      status: 'Status',
+    },
+    empty: 'No one on today’s list yet. Add the first patient.',
+    ready: 'Ready to print',
+    printed: 'Printed',
+    withDoctor: 'With doctor',
+    waiting: (minutes: string) => `Waiting ${minutes}`,
+    print: 'Print',
+    reprint: 'Reprint',
+    uploadFor: (name: string) => `Upload a report for ${name}`,
+    bookFor: (name: string) => `Book an appointment for ${name}`,
+    dragHandle: 'Drag to change the order',
+    reorderHint:
+      'Drag a waiting patient to change who goes in next. Their token stays the same.',
+    none: '—',
+  },
+  add: {
+    title: 'Add patient',
+    titleExisting: "Add to today's list",
+    shortcut: 'N',
+    phone: 'Phone number',
+    phoneHint: 'Search first: returning patients come up here.',
+    noOne: 'No patient with this number. Add a new one:',
+    sharing: (count: number) =>
+      count === 1
+        ? '1 patient uses this number'
+        : `${count} patients use this number`,
+    lastVisit: (date: string) => `last visit ${date}`,
+    newPatient: 'New patient',
+    someoneElse: 'Someone else with this number? Add new patient',
+    alreadyOn: (token: number) => `Already on today's list · #${token}`,
+    fullName: 'Full name',
+    fullNamePlaceholder: "Patient's name",
+    age: 'Age',
+    agePlaceholder: 'Years',
+    sex: 'Sex',
+    reason: 'Reason for visit (optional)',
+    reasonPlaceholder: 'e.g. fever for 3 days',
+    addToday: (token: number) => `Add to today · #${token}`,
+    addNamed: (name: string, token: number) =>
+      `Add ${name} to today · #${token}`,
+    enterAdds: 'adds',
+    escClears: 'clears',
+    enter: 'Enter',
+    esc: 'Esc',
+    added: (name: string, token: number) => `${name} added · token #${token}`,
+  },
+} as const;

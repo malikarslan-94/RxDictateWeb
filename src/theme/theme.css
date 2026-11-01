@@ -1,0 +1,309 @@
+/*
+ * Clinic web design tokens.
+ *
+ * The web counterpart of clinic-app/src/theme/theme.ts: the same colours,
+ * radii and type scale, as Tailwind theme variables. Components use the
+ * classes these make (bg-primary, rounded-card, text-section…) and never a
+ * literal colour, size or radius.
+ *
+ * Colours are CSS variables first, so a dark theme is one block of values
+ * under .dark, with no component changes.
+ */
+@import 'tailwindcss';
+@import '@fontsource-variable/albert-sans';
+@import '@fontsource/noto-nastaliq-urdu/400.css';
+@import '@fontsource/noto-nastaliq-urdu/700.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ colour */
+
+/*
+ * Status colours carry one meaning each — never reuse them decoratively:
+ *   success   ready, done
+ *   warning   waiting, needs review
+ *   danger    overdue, allergy
+ *   neutral   informational only
+ */
+:root {
+  --c-primary: #07a996;
+  --c-primary-strong: #046f62;
+  --c-primary-soft: #c5e7e2;
+  --c-primary-tint: #daf0ec;
+
+  --c-bg: #e7f2f1;
+  --c-surface: #ffffff;
+  --c-border: #d9e6e4;
+
+  --c-ink: #040707;
+  --c-ink-secondary: #5b5b5b;
+  --c-ink-on-primary: #ffffff;
+
+  --c-success: #07a996;
+  --c-success-soft: #c5e7e2;
+  --c-warning: #c97a28;
+  --c-warning-strong: #8a4f12;
+  --c-warning-soft: #fbe7d4;
+  --c-danger: #a32f2f;
+  --c-danger-soft: #fbe2e2;
+  --c-neutral: #5b5b5b;
+  --c-neutral-soft: #ecefef;
+
+  --c-badge: #e8663c;
+  --c-scrim: rgb(4 7 7 / 0.45);
+  --c-disabled: #c6d2d1;
+  --c-disabled-ink: #8a9795;
+
+  /* The dark panel behind the recorder. */
+  --c-console: #050c0b;
+  --c-console-ink: #ffffff;
+  --c-console-muted: #9fb3b0;
+}
+
+/* Derived, as on mobile: replace with the real dark palette when it lands. */
+.dark {
+  --c-primary: #1fc4af;
+  --c-primary-strong: #0e8a7a;
+  --c-primary-soft: #123a36;
+  --c-primary-tint: #0f2d2a;
+  --c-bg: #0b1211;
+  --c-surface: #141c1b;
+  --c-border: #24302e;
+  --c-ink: #f2f7f6;
+  --c-ink-secondary: #a3b0ae;
+  --c-ink-on-primary: #04100e;
+  --c-success: #1fc4af;
+  --c-success-soft: #123a36;
+  --c-warning: #e0a054;
+  --c-warning-strong: #f0c088;
+  --c-warning-soft: #3a2a16;
+  --c-danger: #e06b6b;
+  --c-danger-soft: #3a1c1c;
+  --c-neutral: #a3b0ae;
+  --c-neutral-soft: #1c2625;
+  --c-badge: #f07a52;
+  --c-scrim: rgb(0 0 0 / 0.6);
+  --c-disabled: #2a3634;
+  --c-disabled-ink: #6b7876;
+}
+
+@theme inline {
+  --color-primary: var(--c-primary);
+  --color-primary-strong: var(--c-primary-strong);
+  --color-primary-soft: var(--c-primary-soft);
+  --color-primary-tint: var(--c-primary-tint);
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-border: var(--c-border);
+  --color-ink: var(--c-ink);
+  --color-ink-secondary: var(--c-ink-secondary);
+  --color-ink-on-primary: var(--c-ink-on-primary);
+  --color-success: var(--c-success);
+  --color-success-soft: var(--c-success-soft);
+  --color-warning: var(--c-warning);
+  --color-warning-strong: var(--c-warning-strong);
+  --color-warning-soft: var(--c-warning-soft);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-neutral: var(--c-neutral);
+  --color-neutral-soft: var(--c-neutral-soft);
+  --color-badge: var(--c-badge);
+  --color-scrim: var(--c-scrim);
+  --color-disabled: var(--c-disabled);
+  --color-disabled-ink: var(--c-disabled-ink);
+  --color-console: var(--c-console);
+  --color-console-ink: var(--c-console-ink);
+  --color-console-muted: var(--c-console-muted);
+}
+
+@theme {
+  /* Paper is always light, whatever the screen's theme. */
+  --color-paper: #ffffff;
+  --color-paper-ink: #040707;
+  --color-paper-muted: #5b5b5b;
+  --color-paper-line: #d9e6e4;
+  --color-paper-accent: #07a996;
+  --color-paper-danger: #a32f2f;
+
+  /* -------------------------------------------------------------- type */
+  --font-sans: 'Albert Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-urdu: 'Noto Nastaliq Urdu', serif;
+
+  /* The roles in the type scale. Components pick a role, never a size. */
+  --text-display: 40px;
+  --text-display--line-height: 48px;
+  --text-display--font-weight: 700;
+  --text-screen-title: 28px;
+  --text-screen-title--line-height: 34px;
+  --text-screen-title--font-weight: 700;
+  --text-title: 22px;
+  --text-title--line-height: 28px;
+  --text-title--font-weight: 700;
+  --text-section: 17px;
+  --text-section--line-height: 22px;
+  --text-section--font-weight: 700;
+  --text-lead: 16px;
+  --text-lead--line-height: 24px;
+  --text-label: 14px;
+  --text-label--line-height: 18px;
+  --text-label--font-weight: 700;
+  --text-group: 12px;
+  --text-group--line-height: 16px;
+  --text-group--font-weight: 700;
+  --text-group--letter-spacing: 0.06em;
+  --text-body: 15px;
+  --text-body--line-height: 21px;
+  --text-meta: 13px;
+  --text-meta--line-height: 18px;
+  --text-chip: 11px;
+  --text-chip--line-height: 14px;
+  --text-chip--font-weight: 700;
+
+  /* ------------------------------------------------------------ radius */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-card: 22px;
+  --radius-control: 26px;
+  --radius-sheet: 28px;
+  --radius-chip: 18px;
+
+  /* ----------------------------------------------------------- shadow */
+  /* A list that opens over the page: a dropdown's options. */
+  --shadow-menu: 0 12px 32px rgb(4 7 7 / 0.14);
+
+  /* --------------------------------------------------------- motion */
+  /* A passing message slides in from the right. */
+  --animate-toast-in: toast-in 200ms ease-out;
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ------------------------------------------------------------- sizes */
+  --spacing-control: 48px;
+  --spacing-control-sm: 36px;
+  --spacing-sidebar: 248px;
+  --spacing-rail: 64px;
+  --spacing-panel: 288px;
+  --spacing-queue: 192px;
+  --spacing-dialog: 464px;
+  --spacing-dialog-wide: 560px;
+  /* Two things side by side: a list beside the page it opens, a patient
+     beside their vitals. */
+  --spacing-dialog-large: 1040px;
+  --spacing-readable: 640px;
+  /* A passing message, top right. */
+  --spacing-toast: 360px;
+  --spacing-modal: 90vh;
+  /* The A4 page, on screen and on paper. */
+  --spacing-a4-width: 210mm;
+  --spacing-a4-height: 297mm;
+  --spacing-a4-margin: 14mm;
+  --spacing-print-sidebar: 52mm;
+  --spacing-print-qr: 16mm;
+
+  /* The printed page's own type scale, in points like the server's PDF. */
+  --text-print-name: 17pt;
+  --text-print-name--line-height: 1.2;
+  --text-print-name--font-weight: 700;
+  --text-print-rx: 22pt;
+  --text-print-rx--line-height: 1;
+  --text-print-rx--font-weight: 700;
+  --text-print-strong: 9.5pt;
+  --text-print-strong--line-height: 1.35;
+  --text-print-strong--font-weight: 700;
+  --text-print-body: 9pt;
+  --text-print-body--line-height: 1.4;
+  --text-print-small: 7.5pt;
+  --text-print-small--line-height: 1.35;
+  --text-print-label: 6.5pt;
+  --text-print-label--line-height: 1.3;
+  --text-print-label--font-weight: 700;
+  --text-print-label--letter-spacing: 0.08em;
+  --text-print-urdu: 10pt;
+  --text-print-urdu--line-height: 1.9;
+}
+
+/* ---------------------------------------------------------------- base */
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--c-ink);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    min-height: 100vh;
+  }
+  /* A visible focus ring for keyboard users, on every control. */
+  :focus-visible {
+    outline: 2px solid var(--c-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* --------------------------------------------------------------- print */
+
+/*
+ * The printed page is rendered once more, into .print-only, outside the
+ * app. On paper only that copy shows; on screen it is never seen.
+ */
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  #root {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  html,
+  body {
+    background: #ffffff;
+  }
+}
+
+/*
+ * The Rx table: marker, medicine, M · A · N, when, days, remove. The header
+ * and every row share it, so each column lines up.
+ */
+@utility grid-medicine {
+  grid-template-columns: 1rem minmax(0, 1fr) 7rem 10rem 4.5rem 2rem;
+}
+
+/*
+ * Where a dragged row would land in a table: a line in the primary colour
+ * along the top or the bottom of the row it's over. On the cells, since a
+ * row's own shadow doesn't draw in every browser.
+ */
+@utility drop-above {
+  & > td {
+    box-shadow: inset 0 2px 0 var(--c-primary);
+  }
+}
+@utility drop-below {
+  & > td {
+    box-shadow: inset 0 -2px 0 var(--c-primary);
+  }
+}
+
+/* A bar that grows and shrinks, like the waveform's. */
+@utility transition-height {
+  transition-property: height;
+  transition-timing-function: var(--default-transition-timing-function);
+  transition-duration: var(--default-transition-duration);
+}
