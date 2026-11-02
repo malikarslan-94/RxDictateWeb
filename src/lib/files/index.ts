@@ -39,3 +39,19 @@ export async function putFile(
     throw failure;
   }
 }
+
+/** Long enough for the browser to start the download before the URL goes. */
+const SAVE_URL_LIFETIME_MS = 10_000;
+
+/**
+ * Save `file` to the computer as `name`, where the browser keeps downloads
+ * (or asks where, if the user set it to). Nothing is opened in a tab.
+ */
+export function saveFile(file: Blob, name: string): void {
+  const url = URL.createObjectURL(file);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), SAVE_URL_LIFETIME_MS);
+}

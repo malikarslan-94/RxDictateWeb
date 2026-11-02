@@ -26,9 +26,9 @@ export function PrintActions({ printout }: { printout: PrintoutState }) {
           label={copy.pdf}
           variant="secondary"
           icon={<Icon name="download" className="size-4" />}
-          disabled={!isReady}
-          loading={printout.isOpeningPdf}
-          onClick={printout.openPdf}
+          disabled={!isReady || !printout.canSavePdf}
+          loading={printout.isSavingPdf}
+          onClick={printout.savePdf}
         />
         <Button
           label={copy.whatsapp}

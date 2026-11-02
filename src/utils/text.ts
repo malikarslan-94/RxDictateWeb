@@ -44,3 +44,11 @@ export function doctorTitle(fullName: string): string {
   const name = fullName.trim();
   return !name || /^Dr\.?\s/i.test(name) ? name : `Dr. ${name}`;
 }
+
+/** Characters Windows or macOS refuse in a file's name. */
+const UNSAFE_IN_FILE_NAME = /[\\/:*?"<>|]/g;
+
+/** `name` as a file's name: the refused characters dropped, spaces tidied. */
+export function fileSafeName(name: string): string {
+  return name.replace(UNSAFE_IN_FILE_NAME, '').replace(/\s+/g, ' ').trim();
+}

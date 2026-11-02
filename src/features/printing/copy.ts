@@ -18,10 +18,16 @@ export const printingCopy = {
     print: 'Print',
     orPress: 'or press',
     pdf: 'PDF',
+    pdfFileName: (number: string, name: string) => `${number} ${name}.pdf`,
     whatsapp: 'WhatsApp',
     whatsappText: (name: string, url: string) =>
       `Prescription for ${name}: ${url}`,
     markPrinted: 'Mark as printed · next',
+  },
+  toast: {
+    pdfSaved: 'PDF downloaded.',
+    pdfFailed:
+      "Couldn't make the PDF in this browser. Use Print and choose Save as PDF.",
   },
   preview: {
     title: 'Print preview',

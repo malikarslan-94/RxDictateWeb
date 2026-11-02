@@ -1,4 +1,4 @@
-import { VITAL_RANGES, medicineInstruction } from '@/contract';
+import { VITAL_RANGES, medicineInstruction, verifyQrPath } from '@/contract';
 import type {
   LetterheadSnapshot,
   LocationView,
@@ -12,6 +12,7 @@ import { DAYS } from '@/constants/days';
 import type { DayKey } from '@/constants/days';
 import { printCopy } from '@/constants/printCopy';
 import { WEIGHT_UNIT } from '@/features/vitals';
+import { API_BASE_URL } from '@/lib/api';
 import { addDays, formatPrintDate, formatWeekdayDate } from '@/utils/date';
 import { formatDays } from '@/utils/days';
 import { formatE164 } from '@/utils/phone';
@@ -189,6 +190,10 @@ export function buildPrintout(input: {
     eatMore: sections.dietEat.map((item) => item.text),
     advice: sections.advice.map((item) => item.text),
     rxNumber: rx.number,
+    verifyQrUrl:
+      !isDraft && rx.verification
+        ? `${API_BASE_URL}${verifyQrPath(rx.verification.code)}`
+        : null,
     signature: signatureName(letterhead.doctorName),
     signedBy: doctorName,
   };

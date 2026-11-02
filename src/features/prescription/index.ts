@@ -8,6 +8,6 @@ export {
   useLazyGetPrescriptionQuery,
   useListPrescriptionsQuery,
 } from './api';
-export { RxStatus } from './constants';
+export { DoseLang, RxStatus } from './constants';
 export { buildPrintout } from './printout';
 export { rxCopy } from './copy';

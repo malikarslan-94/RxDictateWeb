@@ -73,6 +73,7 @@ export function PrintPreviewScreen() {
         <PrintDocument
           printout={printout.printout}
           options={page.settings.options}
+          pageRef={printout.pageRef}
         />
       ) : null}
     </div>

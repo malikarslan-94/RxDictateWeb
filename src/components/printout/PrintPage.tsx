@@ -1,3 +1,5 @@
+import type { Ref } from 'react';
+
 import { printCopy } from '@/constants/printCopy';
 import type { PrintOptions, Printout } from '@/types/printout';
 
@@ -8,6 +10,8 @@ import { PrintSidebar } from './PrintSidebar';
 export type PrintPageProps = {
   printout: Printout;
   options: PrintOptions;
+  /** The page itself, for saving it as a PDF. */
+  ref?: Ref<HTMLElement>;
 };
 
 /**
@@ -15,12 +19,13 @@ export type PrintPageProps = {
  * bar, the left column of findings, the Rx, and the signature. The same page
  * is shown on screen (scaled by PrintPreview) and sent to the printer.
  */
-export function PrintPage({ printout, options }: PrintPageProps) {
+export function PrintPage({ printout, options, ref }: PrintPageProps) {
   const { patient } = printout;
   const isPreprinted = options.header === 'preprinted';
 
   return (
     <article
+      ref={ref}
       className="relative flex h-a4-height w-a4-width flex-col overflow-hidden bg-paper px-a4-margin pb-a4-margin text-print-body text-paper-ink"
       // The clinic's own pad already has the header: leave that much paper blank.
       style={{ paddingTop: `${options.topMarginMm}mm` }}
@@ -61,9 +66,21 @@ export function PrintPage({ printout, options }: PrintPageProps) {
 
       <footer className="flex items-end justify-between border-t border-paper-line pt-3">
         <div className="flex items-center gap-3">
-          <span className="flex size-print-qr items-center justify-center border border-dashed border-paper-muted text-print-label text-paper-muted">
-            {printCopy.qr}
-          </span>
+          {printout.verifyQrUrl ? (
+            // From the API's origin when it has its own: CORS lets "Save as
+            // PDF" copy it into the file.
+            <img
+              src={printout.verifyQrUrl}
+              alt={printCopy.qrLabel}
+              crossOrigin="anonymous"
+              className="size-print-qr"
+            />
+          ) : printout.isDraft ? null : (
+            // The letterhead sample in Settings: where the QR goes.
+            <span className="flex size-print-qr items-center justify-center border border-dashed border-paper-muted text-print-label text-paper-muted">
+              {printCopy.qr}
+            </span>
+          )}
           <div>
             {printout.rxNumber ? (
               <p className="text-print-strong">

@@ -1,13 +1,9 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 
+import { A4_MM, PX_PER_MM } from '@/constants/paper';
 import type { PrintOptions, Printout } from '@/types/printout';
 
 import { PrintPage } from './PrintPage';
-
-/** Millimetres to CSS pixels at the browser's 96 dpi. */
-const PX_PER_MM = 96 / 25.4;
-const A4_WIDTH_MM = 210;
-const A4_HEIGHT_MM = 297;
 
 export type PrintPreviewProps = {
   printout: Printout;
@@ -26,7 +22,7 @@ export function PrintPreview({ printout, options }: PrintPreviewProps) {
     const element = frame.current;
     if (!element) return;
     const fit = () =>
-      setScale(Math.min(1, element.clientWidth / (A4_WIDTH_MM * PX_PER_MM)));
+      setScale(Math.min(1, element.clientWidth / (A4_MM.width * PX_PER_MM)));
     fit();
     const observer = new ResizeObserver(fit);
     observer.observe(element);
@@ -37,7 +33,7 @@ export function PrintPreview({ printout, options }: PrintPreviewProps) {
     <div
       ref={frame}
       className="w-full overflow-hidden"
-      style={{ height: A4_HEIGHT_MM * PX_PER_MM * scale }}
+      style={{ height: A4_MM.height * PX_PER_MM * scale }}
     >
       <div className="origin-top-left" style={{ transform: `scale(${scale})` }}>
         <PrintPage printout={printout} options={options} />

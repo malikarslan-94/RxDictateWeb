@@ -5,6 +5,11 @@ export const Routes = {
   signIn: '/sign-in',
   verify: '/verify',
   noClinic: '/no-clinic',
+  /**
+   * Public, outside sign-in: what a printout's QR opens, to check it against
+   * what the doctor approved. clinic-api's VERIFY_BASE_URL points here.
+   */
+  rxCheck: '/v/:code',
 
   setup: '/setup',
   setupAboutYou: '/setup/about-you',

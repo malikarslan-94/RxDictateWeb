@@ -32,6 +32,11 @@ export type Printout = {
   eatMore: string[];
   advice: string[];
   rxNumber: string | null;
+  /**
+   * The QR that checks an approved prescription, from the server. Null on a
+   * draft, which no one should be able to check as genuine.
+   */
+  verifyQrUrl: string | null;
   signature: string;
   signedBy: string;
 };

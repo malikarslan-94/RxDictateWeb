@@ -102,6 +102,7 @@ export function PrintQueueScreen() {
         <PrintDocument
           printout={printout.printout}
           options={queue.settings.options}
+          pageRef={printout.pageRef}
         />
       ) : null}
     </div>

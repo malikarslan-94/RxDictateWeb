@@ -127,6 +127,8 @@ export function samplePrintout(
     eatMore: [],
     advice: [...sample.advice],
     rxNumber: sample.rxNumber,
+    // The sample shows where the QR goes, not one that checks anything.
+    verifyQrUrl: null,
     signature: signatureName(draft.doctorName),
     signedBy: doctorName,
   };

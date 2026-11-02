@@ -29,7 +29,8 @@ src/
   features/
     <feature>/    auth, onboarding, clinic, team, today, patients, visits, vitals,
                   prescription, templates, voice, printing, reception,
-                  reports, appointments, notifications, lock, settings, shell
+                  reports, appointments, notifications, lock, settings, shell,
+                  verification
       screens/      UI only
       components/   parts used only by this feature
       hooks/        the screens' state and behaviour
@@ -46,7 +47,7 @@ src/
   ui/             design-system primitives. No business words ("patient", "doctor").
   components/     shared parts built from ui/, used by 2+ features (PageHeader, form fields, printout)
   hooks/          generic hooks (useHotkey, useDebounce, useNow)
-  lib/            infrastructure: api, session, realtime, toast, storage, recordings, files
+  lib/            infrastructure: api, session, realtime, toast, storage, recordings, files, pdf
   theme/          theme.css: tokens, utilities, print rules
   constants/      app-wide constants and enums (Routes, Hotkeys, ErrorCode, Role)
   utils/          pure functions (phone, time, date, text)
@@ -87,6 +88,7 @@ export function SignInScreen() {
 - A pick-one field is `Select`, and a time of day is `TimeInput` (`FormTimeInput` in a form): the app's own rounded list, never a native `<select>` or `<input type="time">`, whose pop-ups the browser draws square.
 - Every page starts with `PageHeader`: a white card with the page's icon (the one its menu line shows), the title, a line under it, and the page's actions on the right. The consult is the exception; its patient card is its header.
 - Layouts (`AppShell`, `SessionGate`, `SettingsLayout`, `AuthLayout`) wrap pages; route layouts render `<Outlet />`.
+- A public page, for someone with no account here (`/v/:code`, what a printout's QR opens), is a route of its own outside `SessionGate`: no session, no live connection, no shell.
 - One component per file; file name = component name. Screens end in `Screen`.
 - Props type is `<Name>Props`. Callback props are `onX`; handlers inside are `handleX`.
 - Extract a component when it's used twice, is a named thing in the design (e.g. the printout header), or its JSX passes ~40 lines.
@@ -97,7 +99,7 @@ export function SignInScreen() {
 
 - **Hooks** (`useX.ts`) hold state and behaviour, call `api.ts` and `utils/`, and return what the screen needs.
 - **Utils** are pure: input → output, no React, no I/O. Formatting, parsing and calculations go here, never inline in JSX.
-- **API calls** live in the feature's `api.ts` and go through `lib/api`. Nothing else calls `fetch`. The one exception is file bytes sent to a signed storage URL, which go through `putFile` in `lib/files`.
+- **API calls** live in the feature's `api.ts` and go through `lib/api`. Nothing else calls `fetch`. The exceptions are file bytes sent to a signed storage URL, which go through `putFile` in `lib/files`, and what `lib/pdf` reads into a saved PDF: the app's own font files, and the page's images such as the QR.
 - **Server data stays in the RTK Query cache.** Slices hold only app state. Never copy API responses into a slice.
 - Use the typed `useAppSelector` / `useAppDispatch`, never the plain react-redux hooks.
 - **Lists update live; nothing polls.** `useLiveUpdates` (`features/auth`, mounted in `SessionGate`) keeps one WebSocket open through `lib/realtime`. Each `changed` message refetches the tags `lib/realtime/topics.ts` maps its topic to; a reconnect, or a new clinic or location, refetches everything. A new query a topic should refresh needs its tag in that map. Never add `pollingInterval`.
@@ -171,6 +173,8 @@ export type AuthMode = (typeof AuthMode)[keyof typeof AuthMode];
 - **Recordings** that haven't uploaded live in memory (`lib/recordings`) and never in storage.
 - **Report pages** chosen for upload stay in memory as `File` objects and never go to storage. Thumbnails are object URLs, revoked when the page is removed or the form closes. Closing the form or signing out aborts an upload in progress.
 - **Printing** renders the page into a print-only portal and calls `window.print()`. Print rules are in `theme.css`; the page is real A4 in millimetres, and the preview is the same page scaled.
+- **The QR** on an approved printout is the server's image (`verifyQrPath` from the contract), 18 mm like the server's PDF. A draft has none. The letterhead sample in Settings shows an empty box where it goes.
+- **Saving a PDF** draws that same print-only page into a one-page PDF in the browser (`pageToPdf` in `lib/pdf`) and saves it to the computer with `saveFile` from `lib/files`, never in a new tab. The file is the preview: its margins, its fonts and this computer's print settings. Only an approved prescription is saved. WhatsApp still sends the server's link, because a chat can only carry a link.
 - **The lock** hides the app (`inert`) after inactivity without unmounting it, so a recording carries on. The PIN is stored only as a salted SHA-256 hash.
 
 ## 10b. Signing out

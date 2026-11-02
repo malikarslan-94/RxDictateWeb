@@ -50,6 +50,7 @@ export const printCopy = {
   } satisfies Record<MedicineForm, string>,
   rxId: (number: string) => `Rx ID: ${number}`,
   qr: 'QR',
+  qrLabel: 'QR code to check this prescription',
   vitalsTitle: 'Vitals',
   approvedElectronically: 'Approved electronically by the doctor',
   issued: 'Issued electronically · approved by doctor',

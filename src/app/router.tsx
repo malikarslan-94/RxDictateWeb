@@ -41,16 +41,20 @@ import {
 import { AppShell, ComingSoonScreen } from '@/features/shell';
 import { TemplatesScreen } from '@/features/templates';
 import { TodayScreen } from '@/features/today';
+import { RxCheckScreen } from '@/features/verification';
 import { AppArea } from '@/lib/session';
 
 import { AreaGuard, HomeRedirect, RoleGuard } from './guards';
 
 /**
- * Every page and who may see it. Signed out: sign in. A doctor setting up:
+ * Every page and who may see it. Anyone: checking a printout's QR. Signed
+ * out: sign in. A doctor setting up:
  * the three steps. Signed in: the shell, behind the lock, with each role's
  * pages. Anything else goes to where the person starts.
  */
 export const router = createBrowserRouter([
+  // Public: whoever scans a printout's QR has no account here.
+  { path: Routes.rxCheck, element: <RxCheckScreen /> },
   {
     element: <SessionGate />,
     children: [

@@ -230,6 +230,90 @@ the details.
 **The web app then:** needs no change. The assistant's Patients page, search
 and pickers simply return fewer people.
 
+## 13. A QR that proves a printout is genuine
+
+**Shipped (2 Nov 2026).** On the web, an approved printout shows the server's
+QR (it's in "Save as PDF" too), and `/v/:code` is the public page it opens.
+What follows is the request as it was sent.
+
+**Before:** the printout's footer has an empty dashed square marked "QR" beside
+the Rx ID. Nothing makes a code, and there's nothing to scan to.
+
+**Asked:**
+
+- **The code:** at approval, a random, unguessable verification code (16
+  bytes, base64url). Existing approved prescriptions get one by backfill.
+- **On the prescription:** `verification: { code, url } | null`, where `url` is
+  `VERIFY_BASE_URL/code`.
+- **Two public routes, without sign-in and rate-limited per IP:**
+  - `GET /verify/:code`: what a pharmacist needs, and no more. That's the Rx
+    ID, the date, the doctor and clinic, the patient's initials, age and sex,
+    and the medicines, with `valid` or `replaced`.
+  - `GET /verify/:code/qr.svg`: the QR image, so the apps need no QR library.
+- **The server's own PDF** prints the QR too.
+
+The prompt the user pastes into clinic-api has the details.
+
+**The web app then:**
+
+- shows the QR image in that square on approved printouts; drafts keep "Not
+  valid";
+- adds a public page at `/v/:code`, outside sign-in, that shows the answer.
+
+## 14. The server's print file: margins, and the web's layout
+
+**Now:** `GET /prescriptions/:id/pdf` stores the page as HTML when
+`PDF_RENDERER_URL` is unset, as it is locally. Opened in a browser, that page
+runs to the edges of the window, because its margins live only in `@page`,
+which applies on paper alone. A renderer that sets its own margins can drop
+them too. The layout is also older than the web's page: no left column of
+findings, no labels on the patient line, and a different footer. The web's
+"PDF" button no longer uses this file; it saves its own page
+(`src/lib/pdf`). WhatsApp still sends this link, so patients get the old page.
+
+**Asked:**
+
+- **Margins inside the page:** `@page { size: A4; margin: 0 }`, and the page
+  itself a 210 × 297 mm box with 14 mm padding, as the web's `PrintPage` has.
+  Then a browser tab, any renderer and paper all show the same margins.
+- **The web's layout:** `src/components/printout/PrintPage.tsx` and its parts
+  (`PrintLetterhead`, `PrintSidebar`, `PrintRx`), with the sizes in
+  `src/theme/theme.css` (`--spacing-a4-*`, `--spacing-print-*`,
+  `--text-print-*`).
+- **A renderer wherever WhatsApp links go out**, so the link opens a PDF and
+  not an HTML page.
+
+**The web app then:** needs no change.
+
+## 15. Foundation: organisation types, permissions, settings
+
+The design is in `docs/design/organisations-medicines-announcements.md`; this
+is its phase 1.
+
+**Asked:**
+
+- **Organisation types:** `clinic` (every existing practice), `platform`
+  (RxDictate itself: one, with a `platformAdmin` role and a script that creates
+  the first admin), and `company` reserved for phase 3.
+- **Permissions:** `GET /me` returns each membership's `organisationType` and
+  its `can: Action[]`.
+- **Settings:** a registry of settings in `src/shared`, resolved through three
+  layers (platform → organisation → user, with locks), behind `GET /settings`,
+  `PATCH /settings/organisation` and `PATCH /settings/me`. The first entry is
+  `medicines.source`.
+- **Structured fields:** the doctor's specialties, from a shared list, and each
+  location's province and city.
+
+The prompt the user pastes into clinic-api has the details.
+
+**The web app then:**
+
+- shows and hides on `can`, not on role names;
+- reads settings from one hook;
+- edits the specialties in Profile and signature;
+- edits the province and city in each location's form;
+- opens the area that fits the active organisation's type.
+
 ## Already known from testing (not web-specific)
 
 - The voice extractor overwrote earlier lines on an "update" op, and an op with

@@ -207,7 +207,8 @@
   --spacing-a4-height: 297mm;
   --spacing-a4-margin: 14mm;
   --spacing-print-sidebar: 52mm;
-  --spacing-print-qr: 16mm;
+  /* The same as the server's PDF. */
+  --spacing-print-qr: 18mm;
 
   /* The printed page's own type scale, in points like the server's PDF. */
   --text-print-name: 17pt;
