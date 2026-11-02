@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { commonCopy } from '@/constants/copy';
 import { Role } from '@/constants/roles';
 import { locationStatusSchema, membershipStatusSchema } from '@/contract';
 import type { MemberView } from '@/contract';
@@ -8,7 +9,6 @@ import { messageFor, toApiError } from '@/lib/api';
 import { maskE164 } from '@/utils/phone';
 
 import { useListMembersQuery, useRemoveMemberMutation } from '../api';
-import { teamCopy } from '../copy';
 import type { MemberItem, TeamDialog } from '../types';
 
 /**
@@ -46,7 +46,7 @@ export function useTeam() {
       id: member.id,
       name: member.name,
       phone: maskE164(member.phone),
-      role: teamCopy.roles[member.role],
+      role: commonCopy.roles[member.role],
       places: placesOf(member),
       member,
     }));

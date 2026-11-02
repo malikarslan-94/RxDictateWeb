@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useMatch, useNavigate } from 'react-router';
 
 import { Hotkeys } from '@/constants/keys';
-import { Role } from '@/constants/roles';
+import { Action, Role } from '@/constants/roles';
 import { Routes } from '@/constants/routes';
 import { useLocationSwitcher } from '@/features/clinic';
 import { useNewReportsCount } from '@/features/reports';
+import { useCan } from '@/hooks/useCan';
 import { useHotkey } from '@/hooks/useHotkey';
 import { selectIsLiveInterrupted } from '@/lib/realtime';
 import {
@@ -38,15 +39,18 @@ export function useShell() {
   const membership = useAppSelector(selectActiveMembership);
   const isLiveInterrupted = useAppSelector(selectIsLiveInterrupted);
   const isDoctor = role === Role.doctor;
-  const switcher = useLocationSwitcher({ canManage: isDoctor });
+  const canManageLocations = useCan(Action['location.update']);
+  const canPrescribe = useCan(Action['prescription.create']);
+  const canReviewReports = useCan(Action['report.review']);
+  const switcher = useLocationSwitcher({ canManage: canManageLocations });
   const badges: Partial<Record<NavEntry['key'], number>> = {
-    reports: useNewReportsCount(isDoctor),
+    reports: useNewReportsCount(canReviewReports),
   };
   const [dialog, setDialog] = useState<ShellDialog | null>(null);
   const isConsulting = useMatch(Routes.consult) !== null;
 
   // Ctrl K starts a prescription from anywhere.
-  useHotkey(Hotkeys.search, () => setDialog('picker'), isDoctor);
+  useHotkey(Hotkeys.search, () => setDialog('picker'), canPrescribe);
 
   return {
     isDoctor,
@@ -60,8 +64,8 @@ export function useShell() {
     /** A count beside a menu line: patients with reports to see. */
     badges,
     switcher,
-    // A doctor opens it even with one location, to reach "Manage locations".
-    canOpenSwitcher: switcher.canSwitch || isDoctor,
+    // Whoever manages locations opens it even with one, for "Manage locations".
+    canOpenSwitcher: switcher.canSwitch || canManageLocations,
     manageLocations: () => {
       switcher.close();
       navigate(Routes.settingsLocations);

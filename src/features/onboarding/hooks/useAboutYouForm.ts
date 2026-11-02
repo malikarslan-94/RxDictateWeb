@@ -21,6 +21,7 @@ const EMPTY_PROFILE: ProfileValues = {
   speciality: '',
   pmdcNo: '',
   clinicName: '',
+  specialties: [],
 };
 
 /** Step 1: the doctor's name on their account, credentials on the clinic. */

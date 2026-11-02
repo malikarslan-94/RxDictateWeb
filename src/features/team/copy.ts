@@ -13,7 +13,6 @@ export const teamCopy = {
     phone: 'Phone',
     worksAt: 'Works at',
   },
-  roles: { doctor: 'Doctor', pa: 'Assistant', patient: 'Patient' },
   addAssistant: 'Add assistant',
   noAssistant: 'No assistant yet. Add one to share the front desk.',
   secondDoctor: 'A second doctor at your clinic will be possible later.',

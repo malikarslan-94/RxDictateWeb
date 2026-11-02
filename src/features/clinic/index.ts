@@ -14,6 +14,7 @@ export { ProfileFields } from './components/ProfileFields';
 export { EMPTY_LOCATION } from './constants';
 export { clinicCopy } from './copy';
 export { useLocationSwitcher } from './hooks/useLocationSwitcher';
+export { useSetting } from './hooks/useSetting';
 export { fullNameField, locationSchema, profileSchema } from './schemas';
 export type {
   LocationFormInput,

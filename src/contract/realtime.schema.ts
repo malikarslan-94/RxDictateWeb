@@ -36,6 +36,7 @@ export const realtimeTopicSchema = z.enum([
   'team',
   'locations',
   'voice',
+  'settings',
 ]);
 export type RealtimeTopic = z.infer<typeof realtimeTopicSchema>;
 

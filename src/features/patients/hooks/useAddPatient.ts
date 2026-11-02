@@ -4,14 +4,13 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
 
-import { Role } from '@/constants/roles';
+import { Action } from '@/constants/roles';
 import { consultPath } from '@/constants/routes';
 import type { PatientView } from '@/contract';
 import { useCreateVisitMutation, useVisitLifecycle } from '@/features/visits';
 import { useVitalsEntry } from '@/features/vitals';
+import { useCan } from '@/hooks/useCan';
 import { messageFor, toApiError } from '@/lib/api';
-import { selectActiveRole } from '@/lib/session';
-import { useAppSelector } from '@/store/hooks';
 
 import { useCreatePatientMutation } from '../api';
 import { patientsCopy } from '../copy';
@@ -36,7 +35,8 @@ export function useAddPatient({
   onSaved: () => void;
 }) {
   const navigate = useNavigate();
-  const isDoctor = useAppSelector(selectActiveRole) === Role.doctor;
+  // Whoever can prescribe starts one; the others take vitals for the list.
+  const canPrescribe = useCan(Action['prescription.create']);
   const visits = useVisitLifecycle();
   const [createVisit] = useCreateVisitMutation();
   const [createPatient] = useCreatePatientMutation();
@@ -64,7 +64,7 @@ export function useAddPatient({
     (thenContinue: boolean) => async (event?: BaseSyntheticEvent) => {
       event?.preventDefault();
       // Checked alongside the patient's fields, so every mistake shows at once.
-      const readings = isDoctor ? null : await vitals.read();
+      const readings = canPrescribe ? null : await vitals.read();
       await handleSubmit(async (values) => {
         if (readings === false) return;
         if (readings && !thenContinue) {
@@ -86,7 +86,7 @@ export function useAddPatient({
               conditions: values.conditions,
             }).unwrap());
           setSaved(patient);
-          if (thenContinue && isDoctor) {
+          if (thenContinue && canPrescribe) {
             const visitId = await visits.start(patient.id);
             navigate(consultPath(patient.id, visitId));
           } else if (thenContinue) {
@@ -109,11 +109,11 @@ export function useAddPatient({
     control,
     noKnownAllergies,
     saveAndContinue: save(true),
-    continueLabel: isDoctor ? copy.saveAndStart : copy.saveAndList,
-    continueNote: isDoctor ? copy.startNote : copy.listNote,
+    continueLabel: canPrescribe ? copy.saveAndStart : copy.saveAndList,
+    continueNote: canPrescribe ? copy.startNote : copy.listNote,
     saveOnly: save(false),
     /** The assistant takes vitals as they add someone; the doctor doesn't. */
-    vitals: isDoctor ? null : vitals,
+    vitals: canPrescribe ? null : vitals,
     isSaving,
     formError: formState.errors.root?.message,
   };

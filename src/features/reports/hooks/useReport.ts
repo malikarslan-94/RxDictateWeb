@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 
-import { Role } from '@/constants/roles';
+import { Action } from '@/constants/roles';
+import { useCan } from '@/hooks/useCan';
 import { messageFor, toApiError } from '@/lib/api';
-import { selectActiveRole } from '@/lib/session';
-import { useAppSelector } from '@/store/hooks';
 
 import { useGetReportQuery, useReviewReportMutation } from '../api';
 import { LINK_REFRESH_MARGIN_MS } from '../constants';
@@ -16,7 +15,7 @@ import { firstExpiry, toReportItem, toReportPages } from '../utils';
  * The doctor opening a new one marks it reviewed.
  */
 export function useReport(reportId: string) {
-  const isDoctor = useAppSelector(selectActiveRole) === Role.doctor;
+  const canReview = useCan(Action['report.review']);
   const report = useGetReportQuery(reportId, {
     refetchOnMountOrArgChange: true,
   });
@@ -27,8 +26,8 @@ export function useReport(reportId: string) {
 
   useEffect(() => {
     // Best effort: a failed review leaves it "New" for the next look.
-    if (isDoctor && isUnreviewed) review(reportId);
-  }, [isDoctor, isUnreviewed, reportId, review]);
+    if (canReview && isUnreviewed) review(reportId);
+  }, [canReview, isUnreviewed, reportId, review]);
 
   useEffect(() => {
     if (expiry === null) return;

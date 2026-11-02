@@ -4,12 +4,15 @@ import {
   locationViewSchema,
   meViewSchema,
   practiceViewSchema,
+  settingsViewSchema,
 } from '@/contract';
 import type {
   CreateLocationBody,
   LocationView,
   MeView,
   PracticeView,
+  SettingsPatch,
+  SettingsView,
   UpdateLocationBody,
   UpdateMeBody,
   UpdatePracticeBody,
@@ -82,6 +85,44 @@ export const clinicApi = baseApi.injectEndpoints({
       rawResponseSchema: locationViewSchema,
       invalidatesTags: [ApiTag.Location, ApiTag.Me, ApiTag.Member],
     }),
+    /**
+     * Every setting as it applies here: its value, where it came from, and
+     * whether a lock above decided it. The server works it out.
+     */
+    getSettings: build.query<SettingsView, void>({
+      query: () => '/settings',
+      rawResponseSchema: settingsViewSchema,
+      providesTags: [ApiTag.Settings],
+    }),
+    /** The person's own values; `value: null` takes theirs away. */
+    updateMySettings: build.mutation<SettingsView, SettingsPatch>({
+      extraOptions: { success: clinicCopy.toast.saved },
+      query: (body) => ({ url: '/settings/me', method: 'PATCH', body }),
+      rawResponseSchema: settingsViewSchema,
+      // The answer is every setting as it now applies.
+      async onQueryStarted(_body, { dispatch, queryFulfilled }) {
+        const { data } = await queryFulfilled;
+        dispatch(
+          clinicApi.util.upsertQueryData('getSettings', undefined, data),
+        );
+      },
+    }),
+    /** The clinic's values, for every member, and its locks. */
+    updateClinicSettings: build.mutation<SettingsView, SettingsPatch>({
+      extraOptions: { success: clinicCopy.toast.saved },
+      query: (body) => ({
+        url: '/settings/organisation',
+        method: 'PATCH',
+        body,
+      }),
+      rawResponseSchema: settingsViewSchema,
+      async onQueryStarted(_body, { dispatch, queryFulfilled }) {
+        const { data } = await queryFulfilled;
+        dispatch(
+          clinicApi.util.upsertQueryData('getSettings', undefined, data),
+        );
+      },
+    }),
   }),
 });
 
@@ -94,4 +135,7 @@ export const {
   useCreateLocationMutation,
   useUpdateLocationMutation,
   useArchiveLocationMutation,
+  useGetSettingsQuery,
+  useUpdateMySettingsMutation,
+  useUpdateClinicSettingsMutation,
 } = clinicApi;

@@ -1,4 +1,4 @@
-import type { Sex } from '@/contract';
+import type { Role, Sex } from '@/contract';
 
 /** Strings shared by more than one feature. Feature copy lives in its copy.ts. */
 export const commonCopy = {
@@ -17,6 +17,14 @@ export const commonCopy = {
   next: 'Next',
   previous: 'Previous',
   notifications: 'Notifications',
+  roles: {
+    doctor: 'Doctor',
+    pa: 'Assistant',
+    patient: 'Patient',
+    platformAdmin: 'RxDictate admin',
+    reviewer: 'Reviewer',
+    contentManager: 'Content manager',
+  } satisfies Record<Role, string>,
   /** In place of "Live" while the live connection is down. */
   reconnecting: 'Reconnecting…',
   codeDigit: (label: string, position: number) => `${label}, digit ${position}`,

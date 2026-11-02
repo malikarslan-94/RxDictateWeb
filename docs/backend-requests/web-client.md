@@ -287,6 +287,18 @@ findings, no labels on the patient line, and a different footer. The web's
 
 ## 15. Foundation: organisation types, permissions, settings
 
+**Shipped (2 Nov 2026).** On the web:
+
+- `useCan` shows and hides actions;
+- `useSetting` reads settings and writes the person's own value or the
+  clinic's;
+- Profile and signature has a specialty picker;
+- each location's form has province and city;
+- RxDictate's own team lands on `/platform`, a holding page until the admin
+  console.
+
+What follows is the request as it was sent.
+
 The design is in `docs/design/organisations-medicines-announcements.md`; this
 is its phase 1.
 
@@ -315,6 +327,13 @@ The prompt the user pastes into clinic-api has the details.
 - opens the area that fits the active organisation's type.
 
 ## Already known from testing (not web-specific)
+
+- **`PATCH /practice` replaces `features` (and `settings`) whole.**
+  `{ features: { templates: true } }` turns voice back on. clinic-api found it
+  in phase 1 and left it alone. The web app only ever sends
+  `settings.audioRetentionDays`, the one key there is, so nothing breaks
+  today. Fix it before either object gains a second key the apps set
+  separately.
 
 - The voice extractor overwrote earlier lines on an "update" op, and an op with
   no drug name failed the whole part instead of only that line.

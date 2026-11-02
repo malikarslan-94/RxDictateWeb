@@ -16,6 +16,9 @@ export const Routes = {
   setupLocation: '/setup/location',
   setupAssistant: '/setup/assistant',
 
+  /** RxDictate's own team: the admin console, a holding page for now. */
+  platform: '/platform',
+
   // Doctor
   today: '/today',
   consult: '/consult/:patientId',

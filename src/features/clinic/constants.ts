@@ -19,6 +19,8 @@ export const DEFAULT_CLOSES_AT = '21:00';
 export const EMPTY_LOCATION: LocationFormInput = {
   name: '',
   address: '',
+  province: '',
+  city: '',
   phone: '',
   days: DEFAULT_CLINIC_DAYS,
   opensAt: DEFAULT_OPENS_AT,

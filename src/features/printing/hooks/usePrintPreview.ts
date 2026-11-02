@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { Role } from '@/constants/roles';
+import { Action } from '@/constants/roles';
 import { Routes } from '@/constants/routes';
 import { RxStatus } from '@/features/prescription';
+import { useCan } from '@/hooks/useCan';
 import { useNow } from '@/hooks/useNow';
-import { selectActiveRole } from '@/lib/session';
-import { useAppSelector } from '@/store/hooks';
 import { formatTimeAgo } from '@/utils/date';
 
 import { printingCopy } from '../copy';
@@ -22,7 +21,7 @@ const AGO_TICK_MS = 60_000;
  */
 export function usePrintPreview() {
   const navigate = useNavigate();
-  const isDoctor = useAppSelector(selectActiveRole) === Role.doctor;
+  const canSaveTemplate = useCan(Action['template.create']);
   const [isSavingTemplate, setIsSavingTemplate] = useState(false);
   const { id = '' } = useParams<{ id: string }>();
   const printout = usePrintout(id || null);
@@ -44,7 +43,7 @@ export function usePrintPreview() {
           : '',
     ]),
     back: () => navigate(Routes.today),
-    canSaveTemplate: isDoctor && rx?.status === RxStatus.approved,
+    canSaveTemplate: canSaveTemplate && rx?.status === RxStatus.approved,
     templateName:
       rx?.sections.diagnosis.map((item) => item.text).join(', ') ?? '',
     isSavingTemplate,

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { commonCopy } from '@/constants/copy';
 import { DAYS } from '@/constants/days';
-import { timeStringSchema } from '@/contract';
+import { PROVINCES, specialtySchema, timeStringSchema } from '@/contract';
 import { toE164 } from '@/utils/phone';
 
 import { clinicCopy } from './copy';
@@ -44,6 +44,8 @@ export const profileSchema = z.object({
   speciality: z.string().trim().max(120),
   pmdcNo: z.string().trim().max(60),
   clinicName: z.string().trim().max(160),
+  /** What the doctor practises, from the shared list; asked in Settings. */
+  specialties: z.array(specialtySchema),
 });
 
 /** One location: where it is and when it's open. */
@@ -51,6 +53,9 @@ export const locationSchema = z
   .object({
     name: z.string().trim().min(1, errors.clinicNameRequired).max(160),
     address: z.string().trim().max(500),
+    /** `''` until chosen. */
+    province: z.enum(PROVINCES).or(z.literal('')),
+    city: z.string().trim().max(80),
     phone: optionalPhoneSchema,
     days: z.array(z.enum(DAYS)).min(1, errors.daysRequired),
     opensAt: timeField,

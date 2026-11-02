@@ -1,6 +1,7 @@
 import { Navigate, Outlet, createBrowserRouter } from 'react-router';
 
 import { Role } from '@/constants/roles';
+import { AdminHomeScreen } from '@/features/admin';
 import { PatientBookingScreen, ScheduleScreen } from '@/features/appointments';
 import { Routes } from '@/constants/routes';
 import {
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
           { path: Routes.verify, element: <VerifyCodeScreen /> },
           { path: Routes.noClinic, element: <NoClinicScreen /> },
         ],
+      },
+      {
+        element: <AreaGuard area={AppArea.Platform} />,
+        children: [{ path: Routes.platform, element: <AdminHomeScreen /> }],
       },
       {
         element: <AreaGuard area={AppArea.Onboarding} />,

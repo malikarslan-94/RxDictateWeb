@@ -14,11 +14,13 @@ function useAreaHome() {
       ? Routes.signIn
       : area === AppArea.Onboarding
         ? Routes.setupAboutYou
-        : homePath(role);
+        : area === AppArea.Platform
+          ? Routes.platform
+          : homePath(role);
   return { area, role, home };
 }
 
-/** Its pages show only in this part of the app: signed out, setup, or in. */
+/** Its pages show only in this part of the app: signed out, setup, in, or the platform. */
 export function AreaGuard({ area }: { area: AppArea }) {
   const current = useAreaHome();
   return current.area === area ? (

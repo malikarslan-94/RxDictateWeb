@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { commonCopy } from '@/constants/copy';
 import { Role } from '@/constants/roles';
 import {
   selectActiveLocationId,
@@ -43,7 +44,7 @@ export function useUnlock(gate: LockGate) {
   return {
     name: user?.name ?? '',
     roleLine: lockCopy.screen.role(
-      membership ? lockCopy.roles[membership.role] : '',
+      membership ? commonCopy.roles[membership.role] : '',
       place?.name ?? '',
     ),
     isWarm: membership?.role === Role.pa,

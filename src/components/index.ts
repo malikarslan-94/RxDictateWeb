@@ -29,6 +29,8 @@ export { FormInput } from './form/FormInput';
 export type { FormInputProps } from './form/FormInput';
 export { FormPhoneInput } from './form/FormPhoneInput';
 export type { FormPhoneInputProps } from './form/FormPhoneInput';
+export { FormSelect } from './form/FormSelect';
+export type { FormSelectProps } from './form/FormSelect';
 export { FormSegmented } from './form/FormSegmented';
 export type { FormSegmentedProps } from './form/FormSegmented';
 export { FormTextarea } from './form/FormTextarea';

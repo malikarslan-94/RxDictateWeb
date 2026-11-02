@@ -19,10 +19,15 @@ const EMPTY: ProfileValues = {
   speciality: '',
   pmdcNo: '',
   clinicName: '',
+  specialties: [],
 };
 
+const sameItems = (a: readonly string[], b: readonly string[]) =>
+  a.length === b.length && a.every((item) => b.includes(item));
+
 /**
- * Settings › Profile: the doctor's name, credentials and clinic name. While
+ * Settings › Profile: the doctor's name, specialties, credentials and
+ * clinic name. While
  * there are changes and the Save at the foot is out of sight, Save floats at
  * the bottom of the window instead; never both at once.
  */
@@ -42,6 +47,7 @@ export function useProfileSettings() {
           speciality: practice.data.speciality,
           pmdcNo: practice.data.pmdcNo,
           clinicName: practice.data.name,
+          specialties: me.data.specialties,
         }
       : undefined;
 
@@ -55,8 +61,14 @@ export function useProfileSettings() {
 
   const submit = handleSubmit(async (profile) => {
     try {
-      if (profile.fullName !== saved?.fullName) {
-        await updateMe({ name: profile.fullName }).unwrap();
+      if (
+        profile.fullName !== saved?.fullName ||
+        !sameItems(profile.specialties, saved.specialties)
+      ) {
+        await updateMe({
+          name: profile.fullName,
+          specialties: profile.specialties,
+        }).unwrap();
       }
       await updatePractice({
         pmdcNo: profile.pmdcNo,

@@ -25,7 +25,11 @@ export function ProfileSettingsScreen() {
           className="flex flex-col gap-5"
         >
           <Card className="flex flex-col gap-5">
-            <ProfileFields control={profile.control} showClinicName />
+            <ProfileFields
+              control={profile.control}
+              showClinicName
+              showSpecialties
+            />
           </Card>
           <Card className="flex flex-col gap-3">
             <h2 className="text-section">{copy.signature}</h2>

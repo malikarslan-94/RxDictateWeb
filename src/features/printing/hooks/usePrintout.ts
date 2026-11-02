@@ -2,7 +2,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 import { useRef, useState } from 'react';
 
 import { A4_MM } from '@/constants/paper';
-import { Role } from '@/constants/roles';
+import { Action } from '@/constants/roles';
 import {
   useGetMeQuery,
   useGetPracticeQuery,
@@ -16,12 +16,12 @@ import {
   useGetPrescriptionQuery,
 } from '@/features/prescription';
 import { useGetVisitVitalsQuery } from '@/features/vitals';
+import { useCan } from '@/hooks/useCan';
 import { messageFor, toApiError } from '@/lib/api';
 import { saveFile } from '@/lib/files';
 import { pageToPdf } from '@/lib/pdf';
-import { selectActiveRole } from '@/lib/session';
 import { ToastTone, toastShown } from '@/lib/toast';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppDispatch } from '@/store/hooks';
 import { fileSafeName } from '@/utils/text';
 
 import { WHATSAPP_URL } from '../constants';
@@ -36,15 +36,18 @@ import { printingCopy } from '../copy';
  */
 export function usePrintout(prescriptionId: string | null) {
   const dispatch = useAppDispatch();
-  const isDoctor = useAppSelector(selectActiveRole) === Role.doctor;
+  const canReadPractice = useCan(Action['practice.read']);
+  const canReadLocations = useCan(Action['location.read']);
   const pageRef = useRef<HTMLElement>(null);
   const [isSavingPdf, setIsSavingPdf] = useState(false);
   const rx = useGetPrescriptionQuery(prescriptionId ?? skipToken);
   const patient = useGetPatientQuery(rx.data?.patientId ?? skipToken);
   const vitals = useGetVisitVitalsQuery(rx.data?.visitId ?? skipToken);
   const me = useGetMeQuery();
-  const practice = useGetPracticeQuery(undefined, { skip: !isDoctor });
-  const locations = useListLocationsQuery(undefined, { skip: !isDoctor });
+  const practice = useGetPracticeQuery(undefined, { skip: !canReadPractice });
+  const locations = useListLocationsQuery(undefined, {
+    skip: !canReadLocations,
+  });
   const [getPdf, { error: pdfError }] = useGetPrescriptionPdfMutation();
 
   const location =

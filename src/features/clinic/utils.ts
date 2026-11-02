@@ -51,6 +51,8 @@ export function toLocationForm(location: LocationView): LocationFormInput {
   return {
     name: location.name,
     address: location.address,
+    province: location.province ?? '',
+    city: location.city ?? '',
     phone: location.phone,
     days: days.length > 0 ? days : DEFAULT_CLINIC_DAYS,
     opensAt: open[0]?.from ?? DEFAULT_OPENS_AT,
@@ -69,6 +71,9 @@ export function toLocationBody(
   return {
     name: values.name,
     address: values.address,
+    // Blank is "not said"; the server writes the city in title case.
+    province: values.province || null,
+    city: values.city || null,
     phone: values.phone,
     timings: toTimings(values.days, values.opensAt, values.closesAt),
     letterhead,

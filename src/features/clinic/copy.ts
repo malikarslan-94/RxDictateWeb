@@ -2,7 +2,7 @@
 export const clinicCopy = {
   /** Said once the action works; failures speak for themselves. */
   toast: {
-    nameSaved: 'Name saved',
+    nameSaved: 'Your details saved',
     saved: 'Changes saved',
     locationAdded: 'Location added',
     locationSaved: 'Location saved',
@@ -11,6 +11,9 @@ export const clinicCopy = {
   profile: {
     fullName: 'Full name',
     fullNamePlaceholder: 'Dr. Ayesha Siddiqui',
+    specialties: 'What you practise',
+    specialtiesHint:
+      'Pick all that apply. Your printout still shows the speciality line below.',
     qualifications: 'Qualifications',
     qualificationsPlaceholder: 'MBBS, FCPS (Medicine)',
     speciality: 'Speciality',
@@ -27,6 +30,10 @@ export const clinicCopy = {
     namePlaceholder: 'Own Clinic, F-8',
     address: 'Address',
     addressPlaceholder: 'F-8 Markaz, Islamabad',
+    province: 'Province',
+    provincePlaceholder: 'Choose a province',
+    city: 'City',
+    cityPlaceholder: 'Islamabad',
     phone: 'Phone for appointments',
     phoneHint: 'Printed on prescriptions.',
     days: 'Days',

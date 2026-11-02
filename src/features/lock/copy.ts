@@ -42,5 +42,4 @@ export const lockCopy = {
       `Lock after ${minutes} minutes without activity`,
     assistantHint: 'Set on this computer. Unlock with your PIN.',
   },
-  roles: { doctor: 'Doctor', pa: 'Assistant', patient: 'Patient' },
 } as const;

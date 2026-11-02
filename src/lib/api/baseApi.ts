@@ -20,6 +20,7 @@ export const ApiTag = {
   Appointment: 'Appointment',
   FollowUp: 'FollowUp',
   Template: 'Template',
+  Settings: 'Settings',
 } as const;
 
 /** Every tag: invalidating them all refetches whatever is on screen. */

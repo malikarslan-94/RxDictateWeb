@@ -4,13 +4,20 @@ import {
   FormDayPicker,
   FormInput,
   FormPhoneInput,
+  FormSelect,
   FormTimeInput,
 } from '@/components';
+import { PROVINCES, PROVINCE_LABELS } from '@/contract';
 
 import { clinicCopy } from '../copy';
 import type { LocationFormInput, LocationFormValues } from '../schemas';
 
 const copy = clinicCopy.location;
+
+const PROVINCE_OPTIONS = PROVINCES.map((province) => ({
+  value: province,
+  label: PROVINCE_LABELS[province],
+}));
 
 export type LocationFieldsProps = {
   control: Control<LocationFormInput, unknown, LocationFormValues>;
@@ -32,6 +39,22 @@ export function LocationFields({ control }: LocationFieldsProps) {
         label={copy.address}
         placeholder={copy.addressPlaceholder}
       />
+      <div className="grid grid-cols-2 gap-4">
+        <FormSelect
+          control={control}
+          name="province"
+          label={copy.province}
+          options={PROVINCE_OPTIONS}
+          placeholder={copy.provincePlaceholder}
+        />
+        <FormInput
+          control={control}
+          name="city"
+          label={copy.city}
+          placeholder={copy.cityPlaceholder}
+          autoComplete="address-level2"
+        />
+      </div>
       <FormPhoneInput
         control={control}
         name="phone"

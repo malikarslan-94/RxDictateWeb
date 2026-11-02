@@ -22,6 +22,7 @@ export {
   selectActiveRole,
   selectActiveLocationId,
   selectAppArea,
+  selectCan,
   selectRequestScope,
   selectRefreshToken,
   selectAccessToken,

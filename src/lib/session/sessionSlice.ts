@@ -1,7 +1,8 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import { Role } from '@/constants/roles';
+import { OrganisationType, Role } from '@/constants/roles';
+import type { Action } from '@/constants/roles';
 import type { MeView, MembershipView, Session, TokenPair } from '@/contract';
 
 import { pickLocationId, pickMembership } from './selection';
@@ -13,6 +14,8 @@ export const AppArea = {
   /** A doctor who hasn't finished setting up the clinic. */
   Onboarding: 'onboarding',
   App: 'app',
+  /** RxDictate's own team, working in the platform rather than a clinic. */
+  Platform: 'platform',
 } as const;
 export type AppArea = (typeof AppArea)[keyof typeof AppArea];
 
@@ -164,8 +167,19 @@ export const sessionSlice = createSlice({
     selectActiveLocationId: (state) => state.locationId,
     selectAppArea: (state): AppArea => {
       if (!state.session || !state.practiceId) return AppArea.Auth;
+      const membership = state.session.memberships.find(
+        (item) => item.practiceId === state.practiceId,
+      );
+      if (membership?.organisationType === OrganisationType.platform) {
+        return AppArea.Platform;
+      }
       return state.needsOnboarding ? AppArea.Onboarding : AppArea.App;
     },
+    /** Whether the active membership may do this: what to show or hide. */
+    selectCan: (state, action: Action) =>
+      state.session?.memberships
+        .find((membership) => membership.practiceId === state.practiceId)
+        ?.can.includes(action) ?? false,
     selectRequestScope: (state) => ({
       accessToken: state.tokens?.access.token ?? null,
       practiceId: state.practiceId,
@@ -200,6 +214,7 @@ export const {
   selectActiveRole,
   selectActiveLocationId,
   selectAppArea,
+  selectCan,
   selectRequestScope,
   selectRefreshToken,
   selectAccessToken,

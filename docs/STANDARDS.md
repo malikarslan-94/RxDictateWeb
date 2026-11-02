@@ -30,7 +30,7 @@ src/
     <feature>/    auth, onboarding, clinic, team, today, patients, visits, vitals,
                   prescription, templates, voice, printing, reception,
                   reports, appointments, notifications, lock, settings, shell,
-                  verification
+                  verification, admin
       screens/      UI only
       components/   parts used only by this feature
       hooks/        the screens' state and behaviour
@@ -82,7 +82,7 @@ export function SignInScreen() {
 ```
 
 - A plain `navigate(Routes.x)` may sit in a hook's returned function; anything conditional goes in the hook too.
-- Forms bind fields with `FormInput`, `FormPhoneInput`, `FormDayPicker`, `FormTimeInput`, `FormDateInput`, `FormChoiceChips`… from `components/`, and a patient with `FormPatientField` from `features/patients`. A failure that belongs to the whole form shows in a `Banner` above the actions.
+- Forms bind fields with `FormInput`, `FormPhoneInput`, `FormDayPicker`, `FormTimeInput`, `FormDateInput`, `FormSelect`, `FormChoiceChips` (`multiple` for several)… from `components/`, and a patient with `FormPatientField` from `features/patients`. A failure that belongs to the whole form shows in a `Banner` above the actions.
 - A dialog that a page can't import, because its feature imports the page's feature (History, Reports and booking over the Patients page; the template editor over Templates), opens at its own child route: the page renders `<Outlet />`, the dialog's screen reads the route, and closing navigates back to the page.
 - A dialog that leads to another (Reports to one report, History to "Save as template") swaps itself for it instead of stacking a second `Dialog`, so Esc closes one thing at a time. A field inside a dialog that handles Esc itself stops it there.
 - A pick-one field is `Select`, and a time of day is `TimeInput` (`FormTimeInput` in a form): the app's own rounded list, never a native `<select>` or `<input type="time">`, whose pop-ups the browser draws square.
@@ -102,6 +102,9 @@ export function SignInScreen() {
 - **API calls** live in the feature's `api.ts` and go through `lib/api`. Nothing else calls `fetch`. The exceptions are file bytes sent to a signed storage URL, which go through `putFile` in `lib/files`, and what `lib/pdf` reads into a saved PDF: the app's own font files, and the page's images such as the QR.
 - **Server data stays in the RTK Query cache.** Slices hold only app state. Never copy API responses into a slice.
 - Use the typed `useAppSelector` / `useAppDispatch`, never the plain react-redux hooks.
+- **Show or hide an action with `useCan(Action['x.y'])`**, which reads the `can` list the server sends for the active membership. A role's name decides only which pages and menu it gets (`RoleGuard`, `homePath`, the nav); never check `Role.doctor` to decide whether someone may do something.
+- **A setting comes from `useSetting(key)`** (`features/clinic`): the value the server says applies, where it came from, and whether a lock decided it, plus `setMine` and `setForClinic`. The app never works out the layers itself. A new setting is an entry in the contract's registry, not a new field.
+- **The active organisation's type picks the area:** a clinic opens the app, the platform opens `/platform` (`AppArea.Platform`). `pickMembership` prefers a clinic.
 - **Lists update live; nothing polls.** `useLiveUpdates` (`features/auth`, mounted in `SessionGate`) keeps one WebSocket open through `lib/realtime`. Each `changed` message refetches the tags `lib/realtime/topics.ts` maps its topic to; a reconnect, or a new clinic or location, refetches everything. A new query a topic should refresh needs its tag in that map. Never add `pollingInterval`.
 - **A prescription edit shows before it's saved.** The editor's changes go through `apply` in `usePrescriptionDraft`, which hands them to `useDraftSaves`: the change shows at once (the server's op rules run here, in `localOps.ts`), the PATCHes go one at a time and in order, and each answer replaces the cached draft with the edits still waiting laid over it. A refused edit drops out and says why. A line added but not saved yet has a `pending-` id and can't be changed until it lands. Approve and discard act on the whole draft, so they wait for `whenSaved` first.
 - **Today's list has one order on every screen**, the assistant's and the doctor's: sort with `inQueueOrder` from `features/visits` (status, then the assistant's `queuePosition`), never a local order. Only the assistant moves a waiting patient (`useMoveVisitMutation` with `{ before }`); the list moves at once and the token never changes.
