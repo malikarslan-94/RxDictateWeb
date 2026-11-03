@@ -36,3 +36,4 @@ export * from './drug.schema';
 export * from './notification.schema';
 export * from './realtime.schema';
 export * from './verify.schema';
+export * from './portal.schema';

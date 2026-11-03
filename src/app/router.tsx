@@ -18,6 +18,7 @@ import {
 } from '@/features/onboarding';
 import { ClinicMedicinesScreen } from '@/features/medicines';
 import { PatientsScreen } from '@/features/patients';
+import { InviteScreen } from '@/features/portal';
 import {
   ConsultScreen,
   PatientHistoryScreen,
@@ -35,6 +36,7 @@ import {
   AccountScreen,
   LocationsSettingsScreen,
   MedicinesSettingsScreen,
+  PatientAccessSettingsScreen,
   PrintingSettingsScreen,
   ProfileSettingsScreen,
   SecuritySettingsScreen,
@@ -50,7 +52,8 @@ import { AppArea } from '@/lib/session';
 import { AreaGuard, HomeRedirect, RoleGuard } from './guards';
 
 /**
- * Every page and who may see it. Anyone: checking a printout's QR. Signed
+ * Every page and who may see it. Anyone: checking a printout's QR, or an
+ * invite. Signed
  * out: sign in. A doctor setting up:
  * the three steps. Signed in: the shell, behind the lock, with each role's
  * pages. Anything else goes to where the person starts.
@@ -58,6 +61,8 @@ import { AreaGuard, HomeRedirect, RoleGuard } from './guards';
 export const router = createBrowserRouter([
   // Public: whoever scans a printout's QR has no account here.
   { path: Routes.rxCheck, element: <RxCheckScreen /> },
+  // Public: whoever gets an invite's SMS may not have an account yet.
+  { path: Routes.invite, element: <InviteScreen /> },
   {
     element: <SessionGate />,
     children: [
@@ -155,6 +160,10 @@ export const router = createBrowserRouter([
                       {
                         path: Routes.settingsMedicines,
                         element: <MedicinesSettingsScreen />,
+                      },
+                      {
+                        path: Routes.settingsPatientAccess,
+                        element: <PatientAccessSettingsScreen />,
                       },
                     ],
                   },

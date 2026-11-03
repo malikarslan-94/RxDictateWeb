@@ -25,8 +25,8 @@ export const medicinesCopy = {
       myList:
         "Only your list and your clinic's. “Search all medicines” is one click away when you need it.",
       myListFirst:
-        "Your list, then your clinic's, then every other medicine in Pakistan.",
-      all: 'Every medicine in Pakistan, with your list and what you use most first.',
+        "Your list, then your clinic's, then every other medicine in the catalog.",
+      all: 'Every medicine in the catalog, with your list and what you use most first.',
     },
     fromClinic: 'Your clinic chose this. Changing it here applies only to you.',
     fixedByClinic: 'Your clinic has fixed this for its doctors.',

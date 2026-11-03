@@ -18,6 +18,8 @@ export type ReportItem = {
   line: string;
   /** The doctor hasn't looked at it yet. */
   isNew: boolean;
+  /** The patient sent it from their own area. */
+  isFromPatient: boolean;
 };
 
 /** One page of a report being read. */

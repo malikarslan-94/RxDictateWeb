@@ -99,8 +99,8 @@ export const clinicApi = baseApi.injectEndpoints({
       extraOptions: { success: clinicCopy.toast.saved },
       query: (body) => ({ url: '/settings/me', method: 'PATCH', body }),
       rawResponseSchema: settingsViewSchema,
-      // A new mode changes what the medicine suggestions would answer.
-      invalidatesTags: [ApiTag.Medicine],
+      // What suggestions answer, and whether a record can link, follow settings.
+      invalidatesTags: [ApiTag.Medicine, ApiTag.PatientPortal],
       // The answer is every setting as it now applies.
       async onQueryStarted(_body, { dispatch, queryFulfilled }) {
         try {
@@ -122,7 +122,7 @@ export const clinicApi = baseApi.injectEndpoints({
         body,
       }),
       rawResponseSchema: settingsViewSchema,
-      invalidatesTags: [ApiTag.Medicine],
+      invalidatesTags: [ApiTag.Medicine, ApiTag.PatientPortal],
       async onQueryStarted(_body, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

@@ -27,6 +27,9 @@ export function ReportRow({ item, onOpen }: ReportRowProps) {
             {item.isNew ? (
               <StatusChip label={reportsCopy.isNew} tone="waiting" />
             ) : null}
+            {item.isFromPatient ? (
+              <StatusChip label={reportsCopy.fromPatient} tone="neutral" />
+            ) : null}
           </span>
           <span className="block text-meta text-ink-secondary">
             {item.line}

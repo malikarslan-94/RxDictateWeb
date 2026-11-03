@@ -56,6 +56,9 @@ export const authCopy = {
     assistantTitle: "I'm an assistant",
     assistantBody:
       'Ask your doctor to add this number in Settings → Team, then sign in again.',
+    patientTitle: "I'm a patient",
+    patientBody:
+      'Your records are in the RxDictate phone app. Sign in there with this number. You don’t need to set up a clinic.',
     backToSignIn: 'Back to sign in',
   },
   launch: {

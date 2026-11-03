@@ -5,6 +5,7 @@ export const settingsCopy = {
     locations: 'Locations',
     team: 'Team',
     medicines: 'Medicines',
+    patientAccess: 'Patient access',
     voice: 'Voice and microphone',
     security: 'Security',
     printing: 'Printing',

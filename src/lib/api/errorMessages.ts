@@ -1,4 +1,5 @@
 import { ClientErrorCode, ErrorCode } from '@/constants/errorCodes';
+import { PORTAL_INVITE_COOLDOWN_HOURS } from '@/contract';
 import type { ErrorCode as AnyErrorCode } from '@/constants/errorCodes';
 
 import type { ApiError } from './apiError';
@@ -35,6 +36,7 @@ const MESSAGES: Partial<Record<AnyErrorCode, string>> = {
   [ErrorCode.RX_HAS_FLAGS]: 'Confirm the highlighted lines before approving.',
   [ErrorCode.RX_LOCKED]:
     'This prescription is approved. Revise it to make changes.',
+  [ErrorCode.PORTAL_INVITE_TOO_SOON]: `An invite went out in the last ${PORTAL_INVITE_COOLDOWN_HOURS} hours. Try again after that.`,
   [ErrorCode.OP_INVALID]: "That change couldn't be saved. Please try again.",
 };
 

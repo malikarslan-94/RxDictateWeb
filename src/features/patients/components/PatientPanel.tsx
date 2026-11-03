@@ -1,4 +1,5 @@
 import type { PatientView } from '@/contract';
+import { PatientAccessCard } from '@/features/portal';
 import { Avatar, IconButton, StatusChip } from '@/ui';
 
 import { patientsCopy } from '../copy';
@@ -53,6 +54,7 @@ export function PatientPanel({ patient, onClose }: PatientPanelProps) {
       ) : (
         <AssistantPanelActions panel={panel} />
       )}
+      <PatientAccessCard patientId={patient.id} />
     </aside>
   );
 }

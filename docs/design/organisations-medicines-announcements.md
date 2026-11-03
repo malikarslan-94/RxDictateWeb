@@ -1,7 +1,8 @@
 # Design: organisations, access, medicines and announcements
 
-**Status:** agreed direction (1 Nov 2026). Phases 1 and 2 are built (2–3 Nov 2026). Each
-remaining phase at the end becomes a clinic-api prompt, then the web side.
+**Status:** agreed direction (1 Nov 2026). Phases 1 to 3 are built on the server and the web
+(2–3 Nov 2026); the patient's own screens wait for the mobile app. Each remaining phase at the end becomes a clinic-api prompt,
+then the web side.
 
 ## Why
 
@@ -102,14 +103,25 @@ it to their records.
 1. **The signed-in phone matches the record's phone** (proved by the OTP).
 2. **Plus one of these:**
    - **A clinic invite:** staff tap "Invite to RxDictate" on the patient, and
-     an SMS link with a one-time code arrives. Sending it automatically at
-     the first print can be a clinic setting, since SMS costs money.
+     an SMS link with a one-time code arrives. A clinic may instead send it
+     automatically after a patient's first approved prescription, once per
+     patient, with the setting `portal.invites`, since SMS costs money. Never
+     when the patient is added: there's nothing to see yet.
    - **A printed prescription:** the patient scans the QR on their own
      printout, or types its code, and taps "This is mine". The code is the
      verification code from the QR work, so no second code is needed.
 
 Each record is linked on its own. A parent links each child's record, and
 nobody gets a family member's history by accident.
+
+### When a link ends
+
+- **The clinic changes the record's phone:** the link ends at once, because
+  the proof it rested on no longer holds.
+- **The account goes quiet for 180 days:** the link goes dormant and needs a
+  fresh invite or prescription code. An account is its phone number, so
+  whoever gets a reused SIM signs in to the old owner's account. This limits
+  what they can reach.
 
 ### What a patient sees and does
 
@@ -125,7 +137,8 @@ nobody gets a family member's history by accident.
 ### What the clinic controls
 
 - **Whether its patients can link at all,** with a clinic setting
-  `portal.enabled` in the registry.
+  `portal.enabled` in the registry. It starts off, so no clinic's patients get
+  online access until that clinic turns it on.
 - **"Don't share online"** on a single patient's record.
 - **Removing a link.**
 - **Clinic data stays in the clinic.** A clinic never sees a patient's records
@@ -341,11 +354,11 @@ added", "prescription approved"), which stay as they are.
    - DRAP import, lists, the three modes, per-doctor ranking;
    - stop the catalog growing from typing;
    - the `medicineManager` role.
-3. **Review queue and company portal.**
-4. **Announcements:** content, audience, placements, reminders, measurement.
-5. **Patients:** linking (invite and prescription code), the patient's own
-   view, report upload, reminders. It needs only phase 1 and the QR
-   verification code, so it can move earlier if patients matter sooner.
+3. **Patients:** linking (invite and prescription code), the patient's own
+   view, report upload. Reminders follow once push exists, since `/devices` isn't
+   built and every SMS costs money.
+4. **Review queue and company portal.**
+5. **Announcements:** content, audience, placements, reminders, measurement.
 
 ## Decisions
 

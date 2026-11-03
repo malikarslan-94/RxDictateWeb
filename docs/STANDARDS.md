@@ -30,7 +30,7 @@ src/
     <feature>/    auth, onboarding, clinic, team, today, patients, visits, vitals,
                   prescription, templates, voice, printing, reception,
                   reports, appointments, notifications, lock, settings, shell,
-                  verification, admin, medicines
+                  verification, admin, medicines, portal
       screens/      UI only
       components/   parts used only by this feature
       hooks/        the screens' state and behaviour
@@ -88,7 +88,7 @@ export function SignInScreen() {
 - A pick-one field is `Select`, and a time of day is `TimeInput` (`FormTimeInput` in a form): the app's own rounded list, never a native `<select>` or `<input type="time">`, whose pop-ups the browser draws square.
 - Every page starts with `PageHeader`: a white card with the page's icon (the one its menu line shows), the title, a line under it, and the page's actions on the right. The consult is the exception; its patient card is its header.
 - Layouts (`AppShell`, `SessionGate`, `SettingsLayout`, `AuthLayout`) wrap pages; route layouts render `<Outlet />`.
-- A public page, for someone with no account here (`/v/:code`, what a printout's QR opens), is a route of its own outside `SessionGate`: no session, no live connection, no shell.
+- A public page, for someone with no account here (`/v/:code`, what a printout's QR opens; `/i/:code`, what an invite's SMS opens), is a route of its own outside `SessionGate`: no session, no live connection, no shell.
 - One component per file; file name = component name. Screens end in `Screen`.
 - Props type is `<Name>Props`. Callback props are `onX`; handlers inside are `handleX`.
 - Extract a component when it's used twice, is a named thing in the design (e.g. the printout header), or its JSX passes ~40 lines.
@@ -105,6 +105,7 @@ export function SignInScreen() {
 - **Show or hide an action with `useCan(Action['x.y'])`**, which reads the `can` list the server sends for the active membership. A role's name decides only which pages and menu it gets (`RoleGuard`, `homePath`, the nav); never check `Role.doctor` to decide whether someone may do something.
 - **A setting comes from `useSetting(key)`** (`features/clinic`): the value the server says applies, where it came from, and whether a lock decided it, plus `setMine` and `setForClinic`. The app never works out the layers itself. A new setting is an entry in the contract's registry, not a new field.
 - **What a doctor is suggested is the server's answer.** `useSearchDrugsQuery` (`features/medicines`) sends what was typed and the server applies `medicines.source`; the app never filters or re-tiers by list. The mode changes only through `useSetting`, and `everywhere` looks past it for one search, never saving anything.
+- **Whether a patient can see their records is the server's answer.** `features/portal` shows it on the patient panel and never works out a link's state; a patient is never a member of a clinic, so the web has no patient's area yet. An invite's page only explains and shows the code, because a code can be checked only by someone signed in with the matching phone.
 - **The active organisation's type picks the area:** a clinic opens the app, the platform opens `/platform` (`AppArea.Platform`). `pickMembership` prefers a clinic.
 - **Lists update live; nothing polls.** `useLiveUpdates` (`features/auth`, mounted in `SessionGate`) keeps one WebSocket open through `lib/realtime`. Each `changed` message refetches the tags `lib/realtime/topics.ts` maps its topic to; a reconnect, or a new clinic or location, refetches everything. A new query a topic should refresh needs its tag in that map. Never add `pollingInterval`.
 - **A prescription edit shows before it's saved.** The editor's changes go through `apply` in `usePrescriptionDraft`, which hands them to `useDraftSaves`: the change shows at once (the server's op rules run here, in `localOps.ts`), the PATCHes go one at a time and in order, and each answer replaces the cached draft with the edits still waiting laid over it. A refused edit drops out and says why. A line added but not saved yet has a `pending-` id and can't be changed until it lands. Approve and discard act on the whole draft, so they wait for `whenSaved` first.

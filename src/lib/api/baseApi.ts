@@ -22,6 +22,7 @@ export const ApiTag = {
   Template: 'Template',
   Settings: 'Settings',
   Medicine: 'Medicine',
+  PatientPortal: 'PatientPortal',
 } as const;
 
 /** Every tag: invalidating them all refetches whatever is on screen. */

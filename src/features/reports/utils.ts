@@ -1,4 +1,4 @@
-import { reportContentTypeSchema } from '@/contract';
+import { reportContentTypeSchema, reportSourceSchema } from '@/contract';
 import type { ReportDetailView, ReportView } from '@/contract';
 import { formatPrintDate, fromDateString } from '@/utils/date';
 
@@ -64,6 +64,7 @@ export function toReportItem(report: ReportView): ReportItem {
       report.pages,
     ),
     isNew: report.reviewedAt === null,
+    isFromPatient: report.source === reportSourceSchema.enum.patient,
   };
 }
 

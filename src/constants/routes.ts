@@ -10,6 +10,11 @@ export const Routes = {
    * what the doctor approved. clinic-api's VERIFY_BASE_URL points here.
    */
   rxCheck: '/v/:code',
+  /**
+   * Public, outside sign-in: what an invite's SMS opens. clinic-api's
+   * INVITE_BASE_URL points here.
+   */
+  invite: '/i/:code',
 
   setup: '/setup',
   setupAboutYou: '/setup/about-you',
@@ -39,6 +44,7 @@ export const Routes = {
   settingsSecurity: '/settings/security',
   settingsPrinting: '/settings/printing',
   settingsMedicines: '/settings/medicines',
+  settingsPatientAccess: '/settings/patient-access',
 
   // Both
   patients: '/patients',

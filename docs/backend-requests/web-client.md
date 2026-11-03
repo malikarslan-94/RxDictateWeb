@@ -379,6 +379,54 @@ The prompt the user pastes into clinic-api has the details.
 - adds Settings › Medicines: the mode, the doctor's list and the clinic's;
 - lets a doctor add a medicine manager, who opens on the clinic's list.
 
+## 17. Patients: linking and the patient's own view
+
+**Shipped (3 Nov 2026).** On the web:
+
+- the patient panel has an Online access card: where it stands, invite, "Don't
+  share online" and remove access;
+- Settings › Patient access has `portal.enabled` and `portal.invites`;
+- a patient's upload is marked "From patient" among that patient's reports;
+- `/i/:code` explains how to get the app and shows the code;
+- the no-clinic page tells a patient to use the phone app.
+
+The patient's own screens are in the mobile app; none of this works for a patient
+until they ship.
+
+**Left open by clinic-api in this phase:**
+
+- **Staff page keys, to fix:** `assertOwnKeys` checks only the start of a key, so
+  one containing `..` should pass. With the local storage driver, a report could
+  point at another clinic's file. Found by reading the code, not exploited. The
+  portal checks the whole key, and staff uploads should get the same check.
+- A failed SMS still uses up the 24-hour invite limit, because `core/sms` swallows
+  failures. This matters once a real gateway exists.
+- Correcting a mistyped phone still waits out the 24 hours.
+
+What follows is the request as it was sent.
+
+The design is in `docs/design/organisations-medicines-announcements.md`; this
+is its phase 3.
+
+**Asked:**
+
+- **Linking:** a signed-in patient links one record at a time, with a matching
+  phone plus a clinic invite or a printed prescription's code.
+- **Clinic controls:** the settings `portal.enabled` and `portal.invites`, and
+  on a patient: invite, "Don't share online" and remove the link.
+- **The patient's view:** `/portal` routes for approved prescriptions, reports,
+  appointments, follow-ups and vitals, and uploading a report.
+- **When a link ends:** a changed record phone, or 180 quiet days.
+
+The prompt the user pastes into clinic-api has the details.
+
+**The web app then:**
+
+- shows the patient's online access in the patient panel, with its actions;
+- adds the two clinic settings;
+- labels a patient's upload in the reports inbox;
+- adds the public page an invite link opens.
+
 ## Already known from testing (not web-specific)
 
 - **`PATCH /practice` replaces `features` (and `settings`) whole.**

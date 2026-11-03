@@ -25,7 +25,7 @@ const TOPIC_TAGS: Record<RealtimeTopic, (id: string | undefined) => Tag[]> = {
     ApiTag.FollowUp,
   ],
   appointments: () => [ApiTag.Appointment, ApiTag.FollowUp],
-  patients: () => [ApiTag.Patient],
+  patients: () => [ApiTag.Patient, ApiTag.PatientPortal],
   // A report changes the patient lists too: their counts and "new reports".
   reports: () => [ApiTag.Report, ApiTag.Patient],
   notifications: () => [ApiTag.Notification],
@@ -33,7 +33,8 @@ const TOPIC_TAGS: Record<RealtimeTopic, (id: string | undefined) => Tag[]> = {
   team: () => [ApiTag.Member, ApiTag.Me],
   locations: () => [ApiTag.Location, ApiTag.Me],
   voice: (id) => [id ? { type: ApiTag.Voice, id } : ApiTag.Voice],
-  settings: () => [ApiTag.Settings],
+  // Whether a record can link follows the clinic's setting.
+  settings: () => [ApiTag.Settings, ApiTag.PatientPortal],
   medicines: () => [ApiTag.Medicine],
 };
 

@@ -14,6 +14,7 @@ export const reportsCopy = {
   line: (type: string, date: string, pages: number) =>
     `${type} · ${date} · ${pages === 1 ? '1 page' : `${pages} pages`}`,
   isNew: 'New',
+  fromPatient: 'From patient',
   upload: {
     title: 'Upload report',
     pageMeta: 'A lab sheet, a scan or an old prescription, as photos or PDFs.',

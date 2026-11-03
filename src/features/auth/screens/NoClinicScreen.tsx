@@ -36,6 +36,10 @@ export function NoClinicScreen() {
           <h2 className="text-section">{copy.assistantTitle}</h2>
           <p className="text-body text-ink-secondary">{copy.assistantBody}</p>
         </Card>
+        <Card className="flex flex-col gap-3">
+          <h2 className="text-section">{copy.patientTitle}</h2>
+          <p className="text-body text-ink-secondary">{copy.patientBody}</p>
+        </Card>
         <button
           type="button"
           onClick={page.backToSignIn}

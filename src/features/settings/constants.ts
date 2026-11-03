@@ -8,6 +8,7 @@ export const SETTINGS_SECTIONS: readonly {
     | 'locations'
     | 'team'
     | 'medicines'
+    | 'patientAccess'
     | 'voice'
     | 'security'
     | 'printing';
@@ -18,6 +19,7 @@ export const SETTINGS_SECTIONS: readonly {
   { key: 'locations', icon: 'mapPin', path: Routes.settingsLocations },
   { key: 'team', icon: 'users', path: Routes.settingsTeam },
   { key: 'medicines', icon: 'pill', path: Routes.settingsMedicines },
+  { key: 'patientAccess', icon: 'share', path: Routes.settingsPatientAccess },
   { key: 'voice', icon: 'mic', path: Routes.settingsVoice },
   { key: 'security', icon: 'shield', path: Routes.settingsSecurity },
   { key: 'printing', icon: 'printer', path: Routes.settingsPrinting },
