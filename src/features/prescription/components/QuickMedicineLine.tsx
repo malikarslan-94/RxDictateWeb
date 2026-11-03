@@ -4,6 +4,7 @@ import { cx } from '@/utils/classes';
 import { rxCopy } from '../copy';
 import { useQuickMedicine } from '../hooks/useQuickMedicine';
 import type { RxEditor } from '../hooks/useRxEditor';
+import { QuickMedicineMatch } from './QuickMedicineMatch';
 
 const copy = rxCopy.editor;
 
@@ -39,46 +40,37 @@ export function QuickMedicineLine({ editor }: { editor: RxEditor }) {
           className="absolute inset-x-0 top-full z-30 mt-1 overflow-hidden rounded-card border border-border bg-surface py-1"
         >
           {quick.matches.map((drug, index) => (
-            <li
+            <QuickMedicineMatch
               key={drug.id}
-              role="option"
-              aria-selected={index === quick.highlighted}
-            >
-              <button
-                type="button"
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => quick.pick(drug)}
-                className={cx(
-                  'flex w-full items-center justify-between px-4 py-2 text-left',
-                  index === quick.highlighted && 'bg-primary-tint',
-                )}
-              >
-                <span className="text-body">
-                  <strong>{drug.brand || drug.generic}</strong> {drug.strength}{' '}
-                  {rxCopy.form[drug.form].toLowerCase()}
-                </span>
-                <span className="text-meta text-ink-secondary">
-                  {drug.generic}
-                </span>
-              </button>
-            </li>
+              drug={drug}
+              selected={index === quick.highlighted}
+              onPick={() => quick.pick(drug)}
+              onAddToList={
+                quick.canAddToList(drug)
+                  ? () => quick.addToList(drug)
+                  : undefined
+              }
+            />
           ))}
-          <li
-            role="option"
-            aria-selected={quick.highlighted === quick.matches.length}
-          >
-            <button
-              type="button"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => quick.pick(null)}
-              className={cx(
-                'w-full px-4 py-2 text-left text-body text-primary-strong',
-                quick.highlighted === quick.matches.length && 'bg-primary-tint',
-              )}
-            >
-              {copy.noMatch(quick.typedName)}
-            </button>
-          </li>
+          {quick.actions.map((action, index) => {
+            const isSelected =
+              quick.matches.length + index === quick.highlighted;
+            return (
+              <li key={action.label} role="option" aria-selected={isSelected}>
+                <button
+                  type="button"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={action.run}
+                  className={cx(
+                    'w-full px-4 py-2 text-left text-body text-primary-strong',
+                    isSelected && 'bg-primary-tint',
+                  )}
+                >
+                  {action.label}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       ) : null}
     </div>

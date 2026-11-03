@@ -1,5 +1,8 @@
-import { Action } from '@/constants/roles';
-import { definitionOf, settingSourceSchema } from '@/contract';
+import {
+  definitionOf,
+  organisationActionOf,
+  settingSourceSchema,
+} from '@/contract';
 import type { SettingChange, SettingKey, SettingValue } from '@/contract';
 import { useCan } from '@/hooks/useCan';
 
@@ -12,13 +15,14 @@ import {
 /**
  * One setting from the registry as it applies to this person here, and the
  * ways to change it: their own value, or the clinic's for everyone, with a
- * lock. Which value wins is the server's answer, never worked out here.
+ * lock. Which value wins is the server's answer, never worked out here. A
+ * change that fails says so in a toast, like any mutation.
  */
 export function useSetting<K extends SettingKey>(key: K) {
   const settings = useGetSettingsQuery();
   const [updateMine, mine] = useUpdateMySettingsMutation();
   const [updateClinic, clinic] = useUpdateClinicSettingsMutation();
-  const canSetForClinic = useCan(Action['settings.organisation.update']);
+  const canSetForClinic = useCan(organisationActionOf(key));
   const applied = settings.data?.[key];
   const change = (value: SettingValue<K> | null, locked?: boolean) =>
     ({ key, value, locked }) as SettingChange;
@@ -33,9 +37,9 @@ export function useSetting<K extends SettingKey>(key: K) {
     isSaving: mine.isLoading || clinic.isLoading,
     /** The person's own value; null goes back to what applies above. */
     setMine: (value: SettingValue<K> | null) =>
-      updateMine({ values: [change(value)] }).unwrap(),
+      updateMine({ values: [change(value)] }),
     /** The clinic's value for every member; `locked` stops them changing it. */
     setForClinic: (value: SettingValue<K> | null, locked?: boolean) =>
-      updateClinic({ values: [change(value, locked)] }).unwrap(),
+      updateClinic({ values: [change(value, locked)] }),
   };
 }

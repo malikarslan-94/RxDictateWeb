@@ -326,6 +326,59 @@ The prompt the user pastes into clinic-api has the details.
 - edits the province and city in each location's form;
 - opens the area that fits the active organisation's type.
 
+## 16. Medicines for doctors and clinics
+
+**Shipped (3 Nov 2026).** On the web:
+
+- the quick medicine line marks each suggestion (your list, clinic list,
+  unverified) and offers "Add to my list", "Search all medicines" and keeping a
+  typed medicine;
+- Settings › Medicines has the mode, the doctor's list and the clinic's;
+- Settings › Team adds a medicine manager, who opens on the clinic's list at
+  `/medicines`, with the clinic's mode and its lock.
+
+**Still needed from the server, before a clinic can have a second doctor:**
+`GET /settings` gives only the value that applies to the caller. A doctor with
+their own value can't read what the clinic chose, so the web gives the clinic's
+mode and lock to the medicine manager, and a doctor can only lift a lock. A way
+to read a clinic's own values would let a doctor set them too.
+
+**Not on the web yet:** a list item's `usual`. Nothing sets one, so the quick
+line doesn't read it. The design leaves "my usual" for later.
+
+What follows is the request as it was sent.
+
+The design is in `docs/design/organisations-medicines-announcements.md`; this
+is its phase 2.
+
+**Asked:**
+
+- **The national catalog** comes only from a DRAP import script
+  (`yarn drugs:import <file.csv>`) and stops growing from what is typed.
+- **Existing typed rows** become private to each doctor who prescribed them,
+  on that doctor's list, marked unverified.
+- **Lists:** the doctor's own and the clinic's, under `/drug-lists/me` and
+  `/drug-lists/clinic`, each item with an optional usual dose. A clinic's own
+  items and a doctor's typed ones through `POST /drugs`.
+- **Usage** per clinic, doctor and drug, counted at approval.
+- **Suggestions:** `GET /drugs` applies the caller's `medicines.source`, takes
+  `everywhere=true` for a one-off "Search all medicines", and marks each
+  result `inMyList`, `inClinicList` and `verified`.
+- **Typed medicines:** a line nothing matches becomes the doctor's own
+  unverified item when the prescription is approved.
+- **The medicine manager:** a clinic role a doctor adds, which manages the
+  clinic's list and may set the clinic's medicine mode.
+- **Live updates:** a `medicines` topic.
+
+The prompt the user pastes into clinic-api has the details.
+
+**The web app then:**
+
+- shows each suggestion's list and unverified marks, and "Search all
+  medicines" and "Add to my list" in the quick medicine line;
+- adds Settings › Medicines: the mode, the doctor's list and the clinic's;
+- lets a doctor add a medicine manager, who opens on the clinic's list.
+
 ## Already known from testing (not web-specific)
 
 - **`PATCH /practice` replaces `features` (and `settings`) whole.**

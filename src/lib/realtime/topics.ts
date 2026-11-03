@@ -34,6 +34,7 @@ const TOPIC_TAGS: Record<RealtimeTopic, (id: string | undefined) => Tag[]> = {
   locations: () => [ApiTag.Location, ApiTag.Me],
   voice: (id) => [id ? { type: ApiTag.Voice, id } : ApiTag.Voice],
   settings: () => [ApiTag.Settings],
+  medicines: () => [ApiTag.Medicine],
 };
 
 export function tagsFor(topic: RealtimeTopic, id: string | undefined): Tag[] {

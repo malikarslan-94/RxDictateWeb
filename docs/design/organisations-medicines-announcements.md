@@ -1,7 +1,7 @@
 # Design: organisations, access, medicines and announcements
 
-**Status:** agreed direction (1 Nov 2026). Nothing here is built yet. Each phase
-at the end becomes a clinic-api prompt, then the web side.
+**Status:** agreed direction (1 Nov 2026). Phases 1 and 2 are built (2–3 Nov 2026). Each
+remaining phase at the end becomes a clinic-api prompt, then the web side.
 
 ## Why
 
@@ -183,6 +183,10 @@ Every setting is one entry in a registry in `src/shared`:
   settings, so today's `practice.features` folds into the registry over time.
 - **A new setting is one registry entry.** The settings screens can be drawn
   from the registry, so most new settings need no new screen.
+- **Who may set it for a clinic:** an entry may name the action that sets it
+  at the organisation layer, so `medicines.source` follows
+  `drugList.clinic.manage` and a medicine manager can set it without getting
+  every clinic setting. Otherwise it's `settings.organisation.update`.
 
 ## 6. Audience
 
@@ -227,10 +231,12 @@ again.
 - **`drugs`, the national catalog:** one row per product.
   - brand, generic and salt composition, strength, form, pack, company, and
     DRAP registration number;
-  - `source`: `drapImport`, `company` or `clinic`;
+  - `source`: `drapImport`, `company`, `clinic` or `typed`;
   - `status`: `pending`, `active`, `rejected` or `discontinued`;
-  - `scope`: `national`, or one clinic's own local item, visible only inside
-    that clinic.
+  - `scope`: `national`; `clinic`, one clinic's own local item, visible only
+    inside that clinic; or `doctor`, a medicine a doctor typed that the
+    catalog didn't have, visible only to that doctor in that clinic and
+    marked unverified.
 - **`drugLists`:** one per owner, either a doctor in a clinic or the clinic
   itself.
   - Each item is a drug id plus optional usual dose, days and instructions,
@@ -340,10 +346,6 @@ added", "prescription approved"), which stay as they are.
 5. **Patients:** linking (invite and prescription code), the patient's own
    view, report upload, reminders. It needs only phase 1 and the QR
    verification code, so it can move earlier if patients matter sooner.
-
-When phase 2 adds `medicineManager`, the product rule "a doctor adds only
-assistants" in `STANDARDS.md` §11 changes to "a doctor adds assistants and
-medicine managers".
 
 ## Decisions
 

@@ -16,6 +16,7 @@ import {
   AssistantStepScreen,
   LocationStepScreen,
 } from '@/features/onboarding';
+import { ClinicMedicinesScreen } from '@/features/medicines';
 import { PatientsScreen } from '@/features/patients';
 import {
   ConsultScreen,
@@ -33,6 +34,7 @@ import {
 import {
   AccountScreen,
   LocationsSettingsScreen,
+  MedicinesSettingsScreen,
   PrintingSettingsScreen,
   ProfileSettingsScreen,
   SecuritySettingsScreen,
@@ -97,7 +99,7 @@ export const router = createBrowserRouter([
                 element: <AppShell />,
                 children: [
                   {
-                    element: <RoleGuard role={Role.doctor} />,
+                    element: <RoleGuard roles={[Role.doctor]} />,
                     children: [
                       { path: Routes.today, element: <TodayScreen /> },
                       { path: Routes.consult, element: <ConsultScreen /> },
@@ -150,10 +152,14 @@ export const router = createBrowserRouter([
                         path: Routes.settingsPrinting,
                         element: <PrintingSettingsScreen />,
                       },
+                      {
+                        path: Routes.settingsMedicines,
+                        element: <MedicinesSettingsScreen />,
+                      },
                     ],
                   },
                   {
-                    element: <RoleGuard role={Role.pa} />,
+                    element: <RoleGuard roles={[Role.pa]} />,
                     children: [
                       { path: Routes.reception, element: <ReceptionScreen /> },
                       { path: Routes.schedule, element: <ScheduleScreen /> },
@@ -161,41 +167,64 @@ export const router = createBrowserRouter([
                         path: Routes.printQueue,
                         element: <PrintQueueScreen />,
                       },
+                    ],
+                  },
+                  {
+                    element: <RoleGuard roles={[Role.medicineManager]} />,
+                    children: [
+                      {
+                        path: Routes.medicines,
+                        element: <ClinicMedicinesScreen />,
+                      },
+                    ],
+                  },
+                  {
+                    element: (
+                      <RoleGuard roles={[Role.pa, Role.medicineManager]} />
+                    ),
+                    children: [
                       { path: Routes.account, element: <AccountScreen /> },
                     ],
                   },
-                  // Both roles; each sees only its own actions.
+                  // Doctor and assistant; each sees only their own actions.
                   {
-                    path: Routes.patients,
-                    element: <PatientsScreen />,
+                    element: <RoleGuard roles={[Role.doctor, Role.pa]} />,
                     children: [
                       {
-                        element: <RoleGuard role={Role.doctor} />,
+                        path: Routes.patients,
+                        element: <PatientsScreen />,
                         children: [
                           {
-                            path: Routes.patientHistory,
-                            element: <PatientHistoryScreen />,
+                            element: <RoleGuard roles={[Role.doctor]} />,
+                            children: [
+                              {
+                                path: Routes.patientHistory,
+                                element: <PatientHistoryScreen />,
+                              },
+                            ],
+                          },
+                          {
+                            path: Routes.patientReports,
+                            element: <PatientReportsScreen />,
+                          },
+                          {
+                            path: Routes.patientReportUpload,
+                            element: (
+                              <PatientReportsScreen startWith="upload" />
+                            ),
+                          },
+                          {
+                            path: Routes.patientBooking,
+                            element: <PatientBookingScreen />,
                           },
                         ],
                       },
+                      { path: Routes.print, element: <PrintPreviewScreen /> },
                       {
-                        path: Routes.patientReports,
-                        element: <PatientReportsScreen />,
-                      },
-                      {
-                        path: Routes.patientReportUpload,
-                        element: <PatientReportsScreen startWith="upload" />,
-                      },
-                      {
-                        path: Routes.patientBooking,
-                        element: <PatientBookingScreen />,
+                        path: Routes.reportUpload,
+                        element: <UploadReportScreen />,
                       },
                     ],
-                  },
-                  { path: Routes.print, element: <PrintPreviewScreen /> },
-                  {
-                    path: Routes.reportUpload,
-                    element: <UploadReportScreen />,
                   },
                   { path: Routes.comingSoon, element: <ComingSoonScreen /> },
                 ],

@@ -9,11 +9,16 @@ import { messageFor, toApiError } from '@/lib/api';
 import { maskE164 } from '@/utils/phone';
 
 import { useListMembersQuery, useRemoveMemberMutation } from '../api';
+import { teamCopy } from '../copy';
 import type { MemberItem, TeamDialog } from '../types';
 
+/** Who's in the Team table: never another doctor, or someone removed. */
+const TEAM_ROLES: readonly Role[] = [Role.pa, Role.medicineManager];
+
 /**
- * Settings › Team: the clinic's assistants and the dialogs that change them.
- * A doctor adds only assistants, and nobody's role changes once added.
+ * Settings › Team: the clinic's assistants and medicine managers, and the
+ * dialogs that change them. A doctor adds only these two, and nobody's role
+ * changes once added.
  */
 export function useTeam() {
   const members = useListMembersQuery();
@@ -31,14 +36,16 @@ export function useTeam() {
     (location) => location.status === locationStatusSchema.enum.active,
   );
   const placesOf = (member: MemberView) =>
-    activeLocations
-      .filter((location) => member.locationIds.includes(location.id))
-      .map((location) => location.name);
+    member.role === Role.medicineManager
+      ? [teamCopy.allLocations]
+      : activeLocations
+          .filter((location) => member.locationIds.includes(location.id))
+          .map((location) => location.name);
 
   const rows: MemberItem[] = (members.data ?? [])
     .filter(
       (member) =>
-        member.role === Role.pa &&
+        TEAM_ROLES.includes(member.role) &&
         member.status === membershipStatusSchema.enum.active,
     )
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -58,7 +65,12 @@ export function useTeam() {
     retry: members.refetch,
     dialog,
     openAdd: () => open({ kind: 'add' }),
-    openEdit: (member: MemberView) => open({ kind: 'edit', member }),
+    openAddManager: () => open({ kind: 'addManager' }),
+    openEdit: (member: MemberView) =>
+      open({
+        kind: member.role === Role.medicineManager ? 'editManager' : 'edit',
+        member,
+      }),
     openRemove: (member: MemberView) => open({ kind: 'remove', member }),
     closeDialog: () => open(null),
     remove: async (member: MemberView) => {

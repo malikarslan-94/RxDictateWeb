@@ -3,6 +3,11 @@
  * of Lucide so new ones can be added from that set unchanged.
  */
 export const ICON_PATHS = {
+  /** Lucide's pill: medicines. */
+  pill: [
+    'm10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z',
+    'm8.5 8.5 7 7',
+  ],
   mic: [
     'M9 5a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z',
     'M5 10v1a7 7 0 0 0 14 0v-1',

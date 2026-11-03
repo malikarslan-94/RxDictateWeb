@@ -30,10 +30,10 @@ export function AreaGuard({ area }: { area: AppArea }) {
   );
 }
 
-/** Its pages are for one role; the other goes to their own start page. */
-export function RoleGuard({ role }: { role: Role }) {
+/** Its pages are for these roles; anyone else goes to their own start page. */
+export function RoleGuard({ roles }: { roles: readonly Role[] }) {
   const current = useAreaHome();
-  return current.role === role ? (
+  return current.role && roles.includes(current.role) ? (
     <Outlet />
   ) : (
     <Navigate to={current.home} replace />

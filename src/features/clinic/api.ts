@@ -99,12 +99,18 @@ export const clinicApi = baseApi.injectEndpoints({
       extraOptions: { success: clinicCopy.toast.saved },
       query: (body) => ({ url: '/settings/me', method: 'PATCH', body }),
       rawResponseSchema: settingsViewSchema,
+      // A new mode changes what the medicine suggestions would answer.
+      invalidatesTags: [ApiTag.Medicine],
       // The answer is every setting as it now applies.
       async onQueryStarted(_body, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-        dispatch(
-          clinicApi.util.upsertQueryData('getSettings', undefined, data),
-        );
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            clinicApi.util.upsertQueryData('getSettings', undefined, data),
+          );
+        } catch {
+          // Nothing changed, and the failure speaks for itself in a toast.
+        }
       },
     }),
     /** The clinic's values, for every member, and its locks. */
@@ -116,11 +122,16 @@ export const clinicApi = baseApi.injectEndpoints({
         body,
       }),
       rawResponseSchema: settingsViewSchema,
+      invalidatesTags: [ApiTag.Medicine],
       async onQueryStarted(_body, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-        dispatch(
-          clinicApi.util.upsertQueryData('getSettings', undefined, data),
-        );
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            clinicApi.util.upsertQueryData('getSettings', undefined, data),
+          );
+        } catch {
+          // Nothing changed, and the failure speaks for itself in a toast.
+        }
       },
     }),
   }),

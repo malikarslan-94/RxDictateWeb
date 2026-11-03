@@ -31,3 +31,10 @@ export const ASSISTANT_NAV: readonly NavEntry[] = [
 ];
 
 export const ASSISTANT_SOON: readonly NavEntry[] = [];
+
+export const MANAGER_NAV: readonly NavEntry[] = [
+  { key: 'medicines', icon: 'pill', path: Routes.medicines },
+  { key: 'account', icon: 'user', path: Routes.account },
+];
+
+export const MANAGER_SOON: readonly NavEntry[] = [];

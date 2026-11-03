@@ -1,4 +1,6 @@
-import type { Role, Sex } from '@/contract';
+import type { PrescriptionSections, Role, Sex } from '@/contract';
+
+type MedicineForm = PrescriptionSections['medicines'][number]['form'];
 
 /** Strings shared by more than one feature. Feature copy lives in its copy.ts. */
 export const commonCopy = {
@@ -20,11 +22,24 @@ export const commonCopy = {
   roles: {
     doctor: 'Doctor',
     pa: 'Assistant',
+    medicineManager: 'Medicine manager',
     patient: 'Patient',
     platformAdmin: 'RxDictate admin',
     reviewer: 'Reviewer',
     contentManager: 'Content manager',
   } satisfies Record<Role, string>,
+  medicineForms: {
+    tab: 'Tablet',
+    cap: 'Capsule',
+    syp: 'Syrup',
+    inj: 'Injection',
+    drops: 'Drops',
+    cream: 'Cream',
+    ointment: 'Ointment',
+    sachet: 'Sachet',
+    spray: 'Spray',
+    other: 'Other',
+  } satisfies Record<MedicineForm, string>,
   /** In place of "Live" while the live connection is down. */
   reconnecting: 'Reconnecting…',
   codeDigit: (label: string, position: number) => `${label}, digit ${position}`,

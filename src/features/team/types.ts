@@ -1,6 +1,6 @@
 import type { MemberView } from '@/contract';
 
-/** One assistant in the Team table, ready to show. */
+/** One person in the Team table, ready to show. */
 export type MemberItem = {
   id: string;
   name: string;
@@ -16,4 +16,6 @@ export type MemberItem = {
 export type TeamDialog =
   | { kind: 'add' }
   | { kind: 'edit'; member: MemberView }
+  | { kind: 'addManager' }
+  | { kind: 'editManager'; member: MemberView }
   | { kind: 'remove'; member: MemberView };

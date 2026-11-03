@@ -3,13 +3,21 @@ import type { IconName } from '@/ui';
 
 /** Settings' menu, in order. */
 export const SETTINGS_SECTIONS: readonly {
-  key: 'profile' | 'locations' | 'team' | 'voice' | 'security' | 'printing';
+  key:
+    | 'profile'
+    | 'locations'
+    | 'team'
+    | 'medicines'
+    | 'voice'
+    | 'security'
+    | 'printing';
   icon: IconName;
   path: string;
 }[] = [
   { key: 'profile', icon: 'user', path: Routes.settingsProfile },
   { key: 'locations', icon: 'mapPin', path: Routes.settingsLocations },
   { key: 'team', icon: 'users', path: Routes.settingsTeam },
+  { key: 'medicines', icon: 'pill', path: Routes.settingsMedicines },
   { key: 'voice', icon: 'mic', path: Routes.settingsVoice },
   { key: 'security', icon: 'shield', path: Routes.settingsSecurity },
   { key: 'printing', icon: 'printer', path: Routes.settingsPrinting },

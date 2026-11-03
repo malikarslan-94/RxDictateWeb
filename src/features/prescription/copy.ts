@@ -1,3 +1,4 @@
+import { commonCopy } from '@/constants/copy';
 import type {
   HistoryKind,
   PrescriptionSections,
@@ -7,7 +8,6 @@ import type {
 
 import { DAYS_PER_MONTH, DAYS_PER_WEEK } from './constants';
 
-type MedicineForm = PrescriptionSections['medicines'][number]['form'];
 type MedicineRoute = PrescriptionSections['medicines'][number]['route'];
 type MedicineTiming = PrescriptionSections['medicines'][number]['timing'];
 type MedicineFlag = PrescriptionSections['medicines'][number]['flags'][number];
@@ -136,18 +136,7 @@ export const rxCopy = {
   remove: 'Remove',
   save: 'Save',
   confirm: 'Confirm',
-  form: {
-    tab: 'Tablet',
-    cap: 'Capsule',
-    syp: 'Syrup',
-    inj: 'Injection',
-    drops: 'Drops',
-    cream: 'Cream',
-    ointment: 'Ointment',
-    sachet: 'Sachet',
-    spray: 'Spray',
-    other: 'Other',
-  } satisfies Record<MedicineForm, string>,
+  form: commonCopy.medicineForms,
   route: {
     oral: 'by mouth',
     topical: 'on the skin',

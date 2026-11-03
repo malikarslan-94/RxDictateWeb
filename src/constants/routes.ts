@@ -38,6 +38,7 @@ export const Routes = {
   settingsVoice: '/settings/voice',
   settingsSecurity: '/settings/security',
   settingsPrinting: '/settings/printing',
+  settingsMedicines: '/settings/medicines',
 
   // Both
   patients: '/patients',
@@ -55,6 +56,9 @@ export const Routes = {
   schedule: '/schedule',
   printQueue: '/print-queue',
   account: '/account',
+
+  // Medicine manager
+  medicines: '/medicines',
 
   comingSoon: '/coming-soon',
 } as const;
@@ -105,11 +109,13 @@ export function printPath(prescriptionId: string) {
 }
 
 /**
- * Where each role starts: the doctor's Today, the assistant's list. Any other
+ * Where each role starts: the doctor's Today, the assistant's list, the
+ * medicine manager's clinic list. Any other
  * role has no pages here yet, and a page outside the role guards can't loop.
  */
 export function homePath(role: Role | null) {
   if (role === Role.doctor) return Routes.today;
   if (role === Role.pa) return Routes.reception;
+  if (role === Role.medicineManager) return Routes.medicines;
   return Routes.comingSoon;
 }

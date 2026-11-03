@@ -30,7 +30,7 @@ src/
     <feature>/    auth, onboarding, clinic, team, today, patients, visits, vitals,
                   prescription, templates, voice, printing, reception,
                   reports, appointments, notifications, lock, settings, shell,
-                  verification, admin
+                  verification, admin, medicines
       screens/      UI only
       components/   parts used only by this feature
       hooks/        the screens' state and behaviour
@@ -104,6 +104,7 @@ export function SignInScreen() {
 - Use the typed `useAppSelector` / `useAppDispatch`, never the plain react-redux hooks.
 - **Show or hide an action with `useCan(Action['x.y'])`**, which reads the `can` list the server sends for the active membership. A role's name decides only which pages and menu it gets (`RoleGuard`, `homePath`, the nav); never check `Role.doctor` to decide whether someone may do something.
 - **A setting comes from `useSetting(key)`** (`features/clinic`): the value the server says applies, where it came from, and whether a lock decided it, plus `setMine` and `setForClinic`. The app never works out the layers itself. A new setting is an entry in the contract's registry, not a new field.
+- **What a doctor is suggested is the server's answer.** `useSearchDrugsQuery` (`features/medicines`) sends what was typed and the server applies `medicines.source`; the app never filters or re-tiers by list. The mode changes only through `useSetting`, and `everywhere` looks past it for one search, never saving anything.
 - **The active organisation's type picks the area:** a clinic opens the app, the platform opens `/platform` (`AppArea.Platform`). `pickMembership` prefers a clinic.
 - **Lists update live; nothing polls.** `useLiveUpdates` (`features/auth`, mounted in `SessionGate`) keeps one WebSocket open through `lib/realtime`. Each `changed` message refetches the tags `lib/realtime/topics.ts` maps its topic to; a reconnect, or a new clinic or location, refetches everything. A new query a topic should refresh needs its tag in that map. Never add `pollingInterval`.
 - **A prescription edit shows before it's saved.** The editor's changes go through `apply` in `usePrescriptionDraft`, which hands them to `useDraftSaves`: the change shows at once (the server's op rules run here, in `localOps.ts`), the PATCHes go one at a time and in order, and each answer replaces the cached draft with the edits still waiting laid over it. A refused edit drops out and says why. A line added but not saved yet has a `pending-` id and can't be changed until it lands. Approve and discard act on the whole draft, so they wait for `whenSaved` first.
@@ -191,7 +192,7 @@ export type AuthMode = (typeof AuthMode)[keyof typeof AuthMode];
 ## 11. Product rules (never break)
 
 - An assistant can't create, approve or dictate prescriptions. Their pages don't offer it, the router keeps them out of the doctor's pages (`RoleGuard`), and the server enforces it too.
-- A doctor adds only assistants, and nobody's role changes once added.
+- A doctor adds assistants and medicine managers, and nobody's role changes once added. A medicine manager sees only the clinic's medicines and their account.
 - An approved prescription is never edited. Changes create a new version.
 - Signed-in requests always carry the active clinic and location.
 

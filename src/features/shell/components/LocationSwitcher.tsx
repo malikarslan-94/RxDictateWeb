@@ -66,7 +66,7 @@ export function LocationSwitcher({ shell }: { shell: Shell }) {
           </li>
         ))}
       </ul>
-      {shell.isDoctor ? (
+      {shell.canManageLocations ? (
         <button
           type="button"
           onClick={shell.manageLocations}

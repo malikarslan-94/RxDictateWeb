@@ -37,9 +37,7 @@ export const FOLLOW_UP_PRESETS_DAYS = [3, 7, 14, 30] as const;
 export const DAYS_PER_WEEK = 7;
 export const DAYS_PER_MONTH = 30;
 
-/** Medicine search starts after this many letters, once typing pauses. */
-export const DRUG_SEARCH_MIN_LENGTH = 2;
-export const DRUG_SEARCH_DEBOUNCE_MS = 250;
+/** How many suggestions the quick medicine line asks for. */
 export const DRUG_SEARCH_LIMIT = 8;
 
 /** The sections the review screen shows as plain lists, in print order. */

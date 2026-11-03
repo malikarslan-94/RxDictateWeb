@@ -12,9 +12,11 @@ import { NavItem } from './NavItem';
  */
 export function Sidebar({ shell }: { shell: Shell }) {
   const compact = shell.isCompact;
-  const action = shell.isDoctor
+  const action = shell.canPrescribe
     ? { label: shellCopy.nav.newPrescription, onClick: shell.startPrescription }
-    : { label: shellCopy.addPatient, onClick: shell.addPatient };
+    : shell.canAddPatient
+      ? { label: shellCopy.addPatient, onClick: shell.addPatient }
+      : null;
 
   return (
     <aside
@@ -37,18 +39,21 @@ export function Sidebar({ shell }: { shell: Shell }) {
         )}
       </div>
 
-      {compact ? null : <LocationSwitcher shell={shell} />}
+      {compact || !shell.worksAtLocation ? null : (
+        <LocationSwitcher shell={shell} />
+      )}
 
-      {compact ? (
+      {action && compact ? (
         <IconButton icon="plus" label={action.label} onClick={action.onClick} />
-      ) : (
+      ) : null}
+      {action && !compact ? (
         <Button
           label={action.label}
           icon={<Icon name="plus" className="size-4" />}
           fullWidth
           onClick={action.onClick}
         />
-      )}
+      ) : null}
 
       <nav aria-label={shellCopy.nav.label} className="flex flex-col gap-4">
         <ul className="flex flex-col gap-1">

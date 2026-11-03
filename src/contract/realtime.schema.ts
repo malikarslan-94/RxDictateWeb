@@ -37,6 +37,7 @@ export const realtimeTopicSchema = z.enum([
   'locations',
   'voice',
   'settings',
+  'medicines',
 ]);
 export type RealtimeTopic = z.infer<typeof realtimeTopicSchema>;
 

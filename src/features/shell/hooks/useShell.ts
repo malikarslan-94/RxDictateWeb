@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMatch, useNavigate } from 'react-router';
 
+import { commonCopy } from '@/constants/copy';
 import { Hotkeys } from '@/constants/keys';
 import { Action, Role } from '@/constants/roles';
 import { Routes } from '@/constants/routes';
@@ -21,6 +22,8 @@ import {
   ASSISTANT_SOON,
   DOCTOR_NAV,
   DOCTOR_SOON,
+  MANAGER_NAV,
+  MANAGER_SOON,
 } from '../constants';
 import type { NavEntry } from '../constants';
 import { shellCopy } from '../copy';
@@ -39,8 +42,12 @@ export function useShell() {
   const membership = useAppSelector(selectActiveMembership);
   const isLiveInterrupted = useAppSelector(selectIsLiveInterrupted);
   const isDoctor = role === Role.doctor;
+  const isManager = role === Role.medicineManager;
   const canManageLocations = useCan(Action['location.update']);
   const canPrescribe = useCan(Action['prescription.create']);
+  const canAddPatient = useCan(Action['patient.create']);
+  // A medicine manager's work is the whole clinic's, not one place's.
+  const worksAtLocation = useCan(Action['visit.read']);
   const canReviewReports = useCan(Action['report.review']);
   const switcher = useLocationSwitcher({ canManage: canManageLocations });
   const badges: Partial<Record<NavEntry['key'], number>> = {
@@ -53,14 +60,17 @@ export function useShell() {
   useHotkey(Hotkeys.search, () => setDialog('picker'), canPrescribe);
 
   return {
-    isDoctor,
+    canManageLocations,
+    canPrescribe,
+    canAddPatient,
+    worksAtLocation,
     isCompact: isConsulting,
     isLiveInterrupted,
     clinicName: membership?.practiceName ?? '',
     userName: user?.name ?? '',
-    roleLabel: isDoctor ? shellCopy.doctor : shellCopy.assistant,
-    nav: isDoctor ? DOCTOR_NAV : ASSISTANT_NAV,
-    soon: isDoctor ? DOCTOR_SOON : ASSISTANT_SOON,
+    roleLabel: role ? commonCopy.roles[role] : '',
+    nav: isDoctor ? DOCTOR_NAV : isManager ? MANAGER_NAV : ASSISTANT_NAV,
+    soon: isDoctor ? DOCTOR_SOON : isManager ? MANAGER_SOON : ASSISTANT_SOON,
     /** A count beside a menu line: patients with reports to see. */
     badges,
     switcher,

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 import {
-  drugViewSchema,
   historyItemViewSchema,
   prescriptionListItemSchema,
   prescriptionViewSchema,
@@ -9,7 +8,6 @@ import {
 } from '@/contract';
 import type {
   CreatePrescriptionBody,
-  DrugView,
   HistoryItemView,
   Op,
   PrescriptionListItem,
@@ -20,7 +18,6 @@ import type {
 } from '@/contract';
 import { ApiTag, baseApi } from '@/lib/api';
 
-import { DRUG_SEARCH_LIMIT } from './constants';
 import { rxCopy } from './copy';
 import type {
   PatientHistoryPage,
@@ -155,13 +152,6 @@ export const prescriptionApi = baseApi.injectEndpoints({
       query: (id) => `/prescriptions/${id}/pdf`,
       rawResponseSchema: signedUrlViewSchema,
     }),
-    searchDrugs: build.query<DrugView[], string>({
-      query: (q) => ({
-        url: '/drugs',
-        params: { q, limit: DRUG_SEARCH_LIMIT },
-      }),
-      rawResponseSchema: z.array(drugViewSchema),
-    }),
   }),
 });
 
@@ -177,5 +167,4 @@ export const {
   useCancelPrescriptionMutation,
   useRevisePrescriptionMutation,
   useGetPrescriptionPdfMutation,
-  useSearchDrugsQuery,
 } = prescriptionApi;

@@ -14,6 +14,7 @@ export const shellCopy = {
     templates: 'Templates',
     schedule: 'Schedule',
     uploadReports: 'Upload reports',
+    medicines: 'Medicines',
   },
   comingSoon: 'Coming soon',
   withCount: (name: string, count: number) => `${name}, ${count} new`,
@@ -24,6 +25,4 @@ export const shellCopy = {
   logout: 'Log out',
   yourProfile: 'Your profile and signature',
   yourAccount: 'Your account',
-  doctor: 'Doctor',
-  assistant: 'Assistant',
 } as const;

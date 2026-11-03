@@ -9,14 +9,14 @@ import { useAccountName } from '../hooks/useAccountName';
 
 const copy = settingsCopy.account;
 
-/** The assistant's account: who they are, where they work, this computer. */
+/** An assistant's or medicine manager's account: who they are, where they work, this computer. */
 export function AccountScreen() {
   const account = useAccount();
   const name = useAccountName();
 
   return (
     <div className="flex flex-col gap-6 px-8 py-8">
-      <PageHeader icon="user" meta={copy.eyebrow} title={copy.title} />
+      <PageHeader icon="user" meta={account.role} title={copy.title} />
       <div className="flex max-w-readable flex-col gap-5">
         <Card className="flex items-center gap-4">
           <Avatar name={name.name} size="lg" tone="warm" />
@@ -83,7 +83,7 @@ export function AccountScreen() {
               />
             ))}
           </div>
-          <p className="text-meta text-ink-secondary">{copy.worksAtHint}</p>
+          <p className="text-meta text-ink-secondary">{account.worksAtHint}</p>
         </Card>
         <LockSettingsCard canChangeTime={false} />
         <div className="flex items-center justify-between">

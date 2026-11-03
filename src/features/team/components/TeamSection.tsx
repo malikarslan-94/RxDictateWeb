@@ -15,9 +15,10 @@ import {
 import { teamCopy } from '../copy';
 import { useTeam } from '../hooks/useTeam';
 import { AssistantDialog } from './AssistantDialog';
+import { MedicineManagerDialog } from './MedicineManagerDialog';
 import { RemoveMemberDialog } from './RemoveMemberDialog';
 
-/** Settings › Team: the assistants, with Add, Edit and Remove. */
+/** Settings › Team: assistants and medicine managers, with Add, Edit and Remove. */
 export function TeamSection() {
   const team = useTeam();
   const dialog = team.dialog;
@@ -28,11 +29,18 @@ export function TeamSection() {
         <p className="max-w-readable text-body text-ink-secondary">
           {teamCopy.subtitle}
         </p>
-        <Button
-          label={teamCopy.addAssistant}
-          icon={<Icon name="plus" className="size-4" />}
-          onClick={team.openAdd}
-        />
+        <div className="flex shrink-0 gap-3">
+          <Button
+            label={teamCopy.addManager}
+            variant="secondary"
+            onClick={team.openAddManager}
+          />
+          <Button
+            label={teamCopy.addAssistant}
+            icon={<Icon name="plus" className="size-4" />}
+            onClick={team.openAdd}
+          />
+        </div>
       </div>
 
       {team.rows.length > 0 ? (
@@ -100,6 +108,15 @@ export function TeamSection() {
       ) : null}
       {dialog?.kind === 'edit' ? (
         <AssistantDialog member={dialog.member} onClose={team.closeDialog} />
+      ) : null}
+      {dialog?.kind === 'addManager' ? (
+        <MedicineManagerDialog member={null} onClose={team.closeDialog} />
+      ) : null}
+      {dialog?.kind === 'editManager' ? (
+        <MedicineManagerDialog
+          member={dialog.member}
+          onClose={team.closeDialog}
+        />
       ) : null}
       {dialog?.kind === 'remove' ? (
         <RemoveMemberDialog

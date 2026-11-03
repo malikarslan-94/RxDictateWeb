@@ -21,6 +21,7 @@ export const ApiTag = {
   FollowUp: 'FollowUp',
   Template: 'Template',
   Settings: 'Settings',
+  Medicine: 'Medicine',
 } as const;
 
 /** Every tag: invalidating them all refetches whatever is on screen. */
